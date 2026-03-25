@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+.ftco-navbar-light {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1030 !important;
+    margin-top: 0 !important;
+    background: #fff !important;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.ftco-navbar-light.scrolled {
+    position: sticky !important;
+    margin-top: 0 !important;
+}

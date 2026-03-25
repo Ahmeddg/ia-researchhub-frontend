@@ -1,0 +1,47 @@
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Researchers</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addResearcherModal">Add New</button>
+    </div>
+    <table class="table table-striped table-hover mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Affiliation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let researcher of researchers">
+                <td>{{ researcher.id }}</td>
+                <td>{{ researcher.fullName }}</td>
+                <td>{{ researcher.email }}</td>
+                <td>{{ researcher.affiliation }}</td>
+            </tr>
+            <tr *ngIf="researchers.length === 0">
+                <td colspan="4" class="text-center">No researchers found</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Researcher Modal -->
+<div class="modal fade" id="addResearcherModal" tabindex="-1" aria-labelledby="addResearcherModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addResearcherModalLabel">Add New Researcher</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <app-researcher-form (saveSuccess)="onSaveSuccess()"></app-researcher-form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeAddResearcherModal" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

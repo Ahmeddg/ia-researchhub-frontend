@@ -1,0 +1,13 @@
+<form (ngSubmit)="onSubmit()" #domainForm="ngForm">
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" name="name" [(ngModel)]="domain.name" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" [(ngModel)]="domain.description"
+            required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="!domainForm.form.valid">Save</button>
+    <button type="button" class="btn btn-secondary ms-2" (click)="domainForm.reset()">Reset</button>
+</form>

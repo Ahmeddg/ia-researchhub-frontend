@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg navbar-light ftco_navbar bg-light ftco-navbar-light sticky-top" id="ftco-navbar">
+    <div class="container">
+        <a class="navbar-brand text-primary" routerLink="/">Article Management</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/news" routerLinkActive="active">News</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/publications" routerLinkActive="active">Publications</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/projects" routerLinkActive="active">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/researchers" routerLinkActive="active">Researchers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/domains" routerLinkActive="active">Domains</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-primary" routerLink="#" routerLinkActive="active">Join Us</a>
+                </li>
+                <li class="nav-item cta dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button"
+                        data-bs-toggle="dropdown">
+                        Admin
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" routerLink="/users">Users</a></li>
+                        <li><a class="dropdown-item" routerLink="/roles">Roles</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

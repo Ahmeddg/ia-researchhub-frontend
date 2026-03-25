@@ -1,0 +1,40 @@
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">News</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewsModal">Add New</button>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6 mb-3" *ngFor="let item of newsList">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ item.createdAt | date:'medium' }}</h6>
+                    <p class="card-text">{{ item.content }}</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">Posted by: {{ item.user?.username || 'Unknown' }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-info" *ngIf="newsList.length === 0">No news articles found.</div>
+</div>
+
+<!-- Add News Modal -->
+<div class="modal fade" id="addNewsModal" tabindex="-1" aria-labelledby="addNewsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNewsModalLabel">Add New News</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <app-news-form (saveSuccess)="onSaveSuccess()"></app-news-form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeAddNewsModal" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

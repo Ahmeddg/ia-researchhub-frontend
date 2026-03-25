@@ -1,0 +1,20 @@
+<form (ngSubmit)="onSubmit()" #userForm="ngForm">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" name="username" [(ngModel)]="user.username" required>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" [(ngModel)]="user.email" required>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="user.password" required>
+    </div>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="enabled" name="enabled" [(ngModel)]="user.enabled">
+        <label class="form-check-label" for="enabled">Enabled</label>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="!userForm.form.valid">Save</button>
+    <button type="button" class="btn btn-secondary ms-2" (click)="userForm.reset()">Reset</button>
+</form>

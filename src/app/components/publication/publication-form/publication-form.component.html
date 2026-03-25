@@ -1,0 +1,28 @@
+<form (ngSubmit)="onSubmit()" #publicationForm="ngForm">
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" [(ngModel)]="publication.title" required>
+    </div>
+    <div class="mb-3">
+        <label for="abstractText" class="form-label">Abstract</label>
+        <textarea class="form-control" id="abstractText" name="abstractText" rows="3"
+            [(ngModel)]="publication.abstractText" required></textarea>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label for="publicationDate" class="form-label">Publication Date</label>
+            <input type="date" class="form-control" id="publicationDate" name="publicationDate"
+                [(ngModel)]="publication.publicationDate" required>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="doi" class="form-label">DOI</label>
+            <input type="text" class="form-control" id="doi" name="doi" [(ngModel)]="publication.doi" required>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="pdfUrl" class="form-label">PDF URL</label>
+            <input type="url" class="form-control" id="pdfUrl" name="pdfUrl" [(ngModel)]="publication.pdfUrl">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="!publicationForm.form.valid">Save</button>
+    <button type="button" class="btn btn-secondary ms-2" (click)="publicationForm.reset()">Reset</button>
+</form>
