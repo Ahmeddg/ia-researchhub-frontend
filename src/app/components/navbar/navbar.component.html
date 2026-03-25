@@ -21,10 +21,16 @@
                 <li class="nav-item">
                     <a class="nav-link" routerLink="/domains" routerLinkActive="active">Domains</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-primary" routerLink="#" routerLinkActive="active">Join Us</a>
-                </li>
                 <li class="nav-item cta dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="authDropdown" role="button"
+                        data-bs-toggle="dropdown">
+                        Join Us </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" routerLink="/sign-up">SignUp</a></li>
+                        <li><a class="dropdown-item" routerLink="/login">SignIn</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button"
                         data-bs-toggle="dropdown">
                         Admin

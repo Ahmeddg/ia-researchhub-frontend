@@ -6,6 +6,7 @@ import { DomainListComponent } from './components/domain/domain-list/domain-list
 import { PublicationListComponent } from './components/publication/publication-list/publication-list.component';
 import { ProjectListComponent } from './components/project/project-list/project-list.component';
 import { NewsListComponent } from './components/news/news-list/news-list.component';
+import { SignUpComponent } from './components/sign-up/sign-up.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -15,5 +16,7 @@ export const routes: Routes = [
     { path: 'publications', component: PublicationListComponent },
     { path: 'projects', component: ProjectListComponent },
     { path: 'news', component: NewsListComponent },
+    { path: 'sign-up', component: SignUpComponent },
     { path: '**', redirectTo: '' }
 ];
+
