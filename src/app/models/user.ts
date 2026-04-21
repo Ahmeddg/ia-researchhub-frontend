@@ -6,5 +6,5 @@ export interface User {
     email: string;
     password?: string;
     enabled: boolean;
-    roles?: Role[];
+    roles?: string[];
 }

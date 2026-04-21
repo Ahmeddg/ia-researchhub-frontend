@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ResearcherService } from '../../../services/researcher.service';
@@ -11,20 +11,67 @@ import { Researcher } from '../../../models/researcher';
   templateUrl: './researcher-form.component.html',
   styleUrl: './researcher-form.component.css'
 })
-export class ResearcherFormComponent {
-  researcher: Researcher = { fullName: '', email: '', affiliation: '', biography: '' };
+export class ResearcherFormComponent implements OnInit, OnChanges {
+  private researcherService = inject(ResearcherService);
 
+  @Input() researcher: Researcher | null = null;
+  @Input() isEditMode: boolean = false;
   @Output() saveSuccess = new EventEmitter<void>();
 
-  constructor(private researcherService: ResearcherService) { }
+  formModel: Researcher = { fullName: '', email: '', affiliation: '', biography: '' };
+  isSubmitting = false;
+
+  ngOnInit(): void {
+    if (this.researcher && this.isEditMode) {
+      this.formModel = { ...this.researcher };
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['researcher'] && this.researcher) {
+      this.formModel = { ...this.researcher };
+    }
+    if (changes['isEditMode'] && this.isEditMode && this.researcher) {
+      this.formModel = { ...this.researcher };
+    }
+  }
 
   onSubmit() {
-    this.researcherService.create(this.researcher).subscribe({
-      next: () => {
-        this.saveSuccess.emit();
-        this.researcher = { fullName: '', email: '', affiliation: '', biography: '' };
-      },
-      error: (err) => console.error('Error creating researcher', err)
-    });
+    if (!this.formModel.fullName.trim() || !this.formModel.email.trim()) {
+      console.error('Name and email are required');
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    if (this.isEditMode && this.researcher?.id) {
+      this.researcherService.update(this.researcher.id, this.formModel).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.saveSuccess.emit();
+          this.resetForm();
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          console.error('Error updating researcher', err);
+        }
+      });
+    } else {
+      this.researcherService.create(this.formModel).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.saveSuccess.emit();
+          this.resetForm();
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          console.error('Error creating researcher', err);
+        }
+      });
+    }
+  }
+
+  resetForm() {
+    this.formModel = { fullName: '', email: '', affiliation: '', biography: '' };
   }
 }

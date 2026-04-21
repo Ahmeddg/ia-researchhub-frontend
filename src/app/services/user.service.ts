@@ -18,4 +18,8 @@ export class UserService {
   create(data: User): Observable<User> { return this.http.post<User>(this.apiUrl, data); }
   update(id: number, data: User): Observable<User> { return this.http.put<User>(`${this.apiUrl}/${id}`, data); }
   delete(id: number): Observable<void> { return this.http.delete<void>(`${this.apiUrl}/${id}`); }
+
+  assignRoles(id: number, roles: string[]): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/${id}/roles`, roles);
+  }
 }

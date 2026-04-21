@@ -1,4 +1,6 @@
 import { Domain } from './domain';
+import { Researcher } from './researcher';
+import { User } from './user';
 
 export interface Project {
     id?: number;
@@ -6,4 +8,6 @@ export interface Project {
     description: string;
     aiCategory: string;
     domain?: Domain;
+    researchers?: Researcher[];
+    createdBy?: User;
 }

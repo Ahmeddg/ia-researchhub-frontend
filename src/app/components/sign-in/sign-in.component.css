@@ -1,0 +1,80 @@
+/* Base Styles from Sign-up */
+.hero-wrap {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: '';
+    opacity: .3;
+}
+
+.signup-card {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    max-width: 500px;
+    margin: 0 auto;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.signup-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(37, 99, 235, 0.1); /* Slightly deeper blue tint */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.form-control-lg {
+    font-size: 1rem;
+    padding: 0.8rem 1.25rem;
+    border-radius: 10px;
+    border: 2px solid #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.form-control-lg:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.signup-btn {
+    padding: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    background: #2563eb; /* Use the hover color of signup as primary for signin */
+    border-color: #2563eb;
+    transition: all 0.3s ease;
+}
+
+.signup-btn:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+
+.form-check-input:checked {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+@media (max-width: 767.98px) {
+    .one-half {
+        width: 100%;
+        padding: 2rem 1rem !important;
+    }
+}

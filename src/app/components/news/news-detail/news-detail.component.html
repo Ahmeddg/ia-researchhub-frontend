@@ -1,0 +1,142 @@
+<div class="news-detail-container" *ngIf="article">
+  <!-- Back Button -->
+  <button class="back-link" (click)="goBack()">
+    <i class="fas fa-arrow-left"></i>
+    Back to News
+  </button>
+
+  <div class="main-layout">
+    <!-- Main Content Area -->
+    <div class="article-column">
+      <!-- Hero Image -->
+      <div class="hero-wrap">
+        <img [src]="article.imageUrl || 'assets/images/news-placeholder.jpg'" [alt]="article.title">
+        <div class="hero-overlay"></div>
+        <div class="hero-badge">
+          <span class="badge-custom" [ngClass]="'bg-' + (article.category?.toLowerCase() || 'research')">
+            {{ article.category }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Title & Meta Header -->
+      <div class="article-header">
+        <h1 class="article-title">{{ article.title }}</h1>
+        
+        <div class="meta-row">
+          <div class="author-meta">
+            <div class="author-avatar" [ngClass]="'avatar-' + (article.category?.toLowerCase() || 'research')">
+              {{ getInitials(article.author) }}
+            </div>
+            <div>
+              <p class="author-label">{{ article.author || article.user?.username || 'SciShare' }}</p>
+              <p class="author-sub">Science Policy Correspondent</p>
+            </div>
+          </div>
+
+          <div class="meta-item">
+            <i class="far fa-calendar-alt"></i>
+            <span>{{ article.publishedAt || (article.createdAt | date:'MMMM d, y') }}</span>
+          </div>
+
+          <div class="meta-item">
+            <i class="far fa-clock"></i>
+            <span>{{ article.readTime }} min read</span>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn-action"><i class="fas fa-share-alt"></i> Share</button>
+            <button class="btn-action"><i class="far fa-bookmark"></i> Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article Excerpt Box -->
+      <div class="excerpt-box" [ngClass]="'border-' + (article.category?.toLowerCase() || 'research')">
+        <p>{{ article.excerpt }}</p>
+      </div>
+
+      <!-- Article Body -->
+      <div class="article-body">
+         <p *ngFor="let p of article.content.split('\n')" class="paragraph">{{ p }}</p>
+      </div>
+
+      <!-- Tags Section -->
+      <div class="tags-section">
+        <span *ngFor="let tag of (article.tags?.split(',') || [])" class="tag-pill">
+          <i class="fas fa-tag"></i> {{ tag.trim() }}
+        </span>
+      </div>
+
+      <div class="source-info">
+        <p>Source: <span class="source-name">SciShare Editorial</span> · Published on {{ article.publishedAt || (article.createdAt | date:'mediumDate') }}</p>
+      </div>
+    </div>
+
+    <!-- Sidebar Area -->
+    <aside class="sidebar-column">
+      <div class="sticky-top">
+        <!-- About This Article -->
+        <div class="sidebar-card">
+          <h3 class="card-title">About this article</h3>
+          <div class="card-items">
+            <div class="card-item">
+              <i class="far fa-user"></i>
+              <div>
+                <p class="item-bold">{{ article.author || article.user?.username || 'Researcher' }}</p>
+                <p class="item-sub">Primary Author</p>
+              </div>
+            </div>
+            <div class="card-item">
+              <i class="far fa-calendar"></i>
+              <span class="item-text">{{ article.publishedAt || (article.createdAt | date:'mediumDate') }}</span>
+            </div>
+            <div class="card-item">
+              <i class="far fa-clock"></i>
+              <span class="item-text">{{ article.readTime }} minute read</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Related Articles -->
+        <div class="sidebar-card" *ngIf="relatedArticles.length > 0">
+          <h3 class="card-title">Related Articles</h3>
+          <div class="related-list">
+            <div class="related-item" *ngFor="let rel of relatedArticles" [routerLink]="['/news', rel.id]">
+              <img [src]="rel.imageUrl || 'assets/images/news-placeholder.jpg'" [alt]="rel.title">
+              <div class="related-info">
+                <span class="small-badge">{{ rel.category }}</span>
+                <p class="related-title">{{ rel.title }}</p>
+                <span class="related-meta">{{ rel.readTime }} min</span>
+              </div>
+            </div>
+          </div>
+          <a routerLink="/news" class="all-news-link">All news <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <!-- CTA Box -->
+        <div class="cta-box">
+          <p class="cta-title">Explore the research</p>
+          <p class="cta-text">Find scientific publications related to this topic on AI Research Hub.</p>
+          <button class="cta-btn" routerLink="/publications">Search Publications</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Error state -->
+<div class="error-wrap" *ngIf="error && !isLoading">
+  <div class="text-center py-5">
+    <i class="fas fa-exclamation-circle text-danger mb-3" style="font-size: 48px;"></i>
+    <p class="text-muted">{{ error }}</p>
+    <button class="btn btn-primary mt-3" (click)="goBack()">Back to News</button>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div class="loading-wrap" *ngIf="isLoading">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>

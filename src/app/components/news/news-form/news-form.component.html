@@ -1,13 +1,107 @@
-<form (ngSubmit)="onSubmit()" #newsForm="ngForm">
-    <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
-        <input type="text" class="form-control" id="title" name="title" [(ngModel)]="news.title" required>
+<form (ngSubmit)="onSubmit()" #newsForm="ngForm" class="p-3">
+    <!-- Title -->
+    <div class="mb-4">
+        <label for="title" class="form-label fw-bold small text-uppercase text-muted">
+            Article Title
+            <span class="text-danger" *ngIf="!isEditMode">*</span>
+        </label>
+        <input type="text" class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary" 
+               id="title" name="title" [(ngModel)]="news.title" [required]="!isEditMode"
+               placeholder="Enter article title">
     </div>
-    <div class="mb-3">
-        <label for="content" class="form-label">Content</label>
-        <textarea class="form-control" id="content" name="content" rows="4" [(ngModel)]="news.content"
-            required></textarea>
+
+    <!-- Row 1: Category and Image URL -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <label for="category" class="form-label fw-bold small text-uppercase text-muted">Category</label>
+            <select class="form-select border-0 bg-light py-2 px-3 shadow-none focus-primary" 
+                    id="category" name="category" [(ngModel)]="news.category">
+                <option value="" disabled selected>Select category...</option>
+                <option value="Research">Research</option>
+                <option value="Technology">Technology</option>
+                <option value="Policy">Policy</option>
+                <option value="Events">Events</option>
+                <option value="Funding">Funding</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-4">
+            <label for="imageUrl" class="form-label fw-bold small text-uppercase text-muted">Image URL</label>
+            <input type="url" class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary" 
+                   id="imageUrl" name="imageUrl" [(ngModel)]="news.imageUrl"
+                   placeholder="https://example.com/image.jpg">
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary" [disabled]="!newsForm.form.valid">Save</button>
-    <button type="button" class="btn btn-secondary ms-2" (click)="newsForm.reset()">Reset</button>
+
+    <!-- Excerpt -->
+    <div class="mb-4">
+        <label for="excerpt" class="form-label fw-bold small text-uppercase text-muted">Excerpt (Short Summary)</label>
+        <textarea class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary" 
+                  id="excerpt" name="excerpt" rows="2" [(ngModel)]="news.excerpt"
+                  placeholder="Brief summary of the article..."></textarea>
+    </div>
+
+    <!-- Row 2: Author and Published Date -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <label for="author" class="form-label fw-bold small text-uppercase text-muted">Author Name</label>
+            <input type="text" class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary" 
+                   id="author" name="author" [(ngModel)]="news.author" 
+                   placeholder="e.g. Dr. Sarah Mitchell">
+        </div>
+        <div class="col-md-6 mb-4">
+            <label for="publishedAt" class="form-label fw-bold small text-uppercase text-muted">Published Date</label>
+            <input type="datetime-local" class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary" 
+                   id="publishedAt" name="publishedAt" [(ngModel)]="news.publishedAt">
+        </div>
+    </div>
+
+    <!-- Row 3: Read Time and Tags -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <label for="readTime" class="form-label fw-bold small text-uppercase text-muted">Read Time (minutes)</label>
+            <input type="number" class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary" 
+                   id="readTime" name="readTime" [(ngModel)]="news.readTime"
+                   placeholder="5" min="1">
+        </div>
+        <div class="col-md-8 mb-4">
+            <label for="tags" class="form-label fw-bold small text-uppercase text-muted">Tags (comma-separated)</label>
+            <input type="text" class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary" 
+                   id="tags" name="tags" [(ngModel)]="news.tags" 
+                   placeholder="e.g. AI, Science, Policy">
+        </div>
+    </div>
+
+    <!-- Featured Checkbox -->
+    <div class="mb-4">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="featured" name="featured" 
+                   [(ngModel)]="news.featured">
+            <label class="form-check-label fw-bold" for="featured">
+                <i class="bi bi-star-fill me-2"></i>Featured Story (Show on Homepage)
+            </label>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="mb-4">
+        <label for="content" class="form-label fw-bold small text-uppercase text-muted">
+            Article Content
+            <span class="text-danger" *ngIf="!isEditMode">*</span>
+        </label>
+        <textarea class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary" 
+                  id="content" name="content" rows="8" [(ngModel)]="news.content" [required]="!isEditMode"
+                  placeholder="Write your article content here..."></textarea>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex gap-2 pt-3">
+        <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 fw-bold flex-grow-1 shadow-sm" 
+                [disabled]="!newsForm.form.valid">
+            <i class="bi bi-check-lg me-2"></i>{{ isEditMode ? 'Update Article' : 'Publish Article' }}
+        </button>
+        <button type="button" class="btn btn-light rounded-pill px-4 py-2 fw-semibold" 
+                (click)="newsForm.reset()">
+            Reset
+        </button>
+    </div>
 </form>

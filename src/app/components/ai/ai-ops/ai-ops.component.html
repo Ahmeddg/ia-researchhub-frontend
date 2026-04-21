@@ -1,0 +1,62 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">AI Operations</h3>
+    <button class="btn btn-outline-primary" (click)="refresh()">Refresh</button>
+  </div>
+
+  <div *ngIf="error" class="alert alert-warning">{{ error }}</div>
+
+  <div *ngIf="loading" class="text-muted">Loading AI operations data...</div>
+
+  <div *ngIf="!loading">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Health</h5>
+        <p class="mb-1"><strong>Status:</strong> {{ health?.status || 'unknown' }}</p>
+        <p class="mb-0"><strong>Model Loaded:</strong> {{ health?.modelLoaded ? 'Yes' : 'No' }}</p>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">Re-cluster</h5>
+          <button class="btn btn-danger" [disabled]="reclustering" (click)="triggerRecluster()">
+            {{ reclustering ? 'Running...' : 'Trigger Re-cluster' }}
+          </button>
+        </div>
+        <div *ngIf="reclusterResult" class="mt-3 small text-muted">
+          Publications: {{ reclusterResult.totalPublications }},
+          Clusters: {{ reclusterResult.clustersFound }},
+          Noise: {{ reclusterResult.noisePoints }}
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Clusters ({{ clusters.length }})</h5>
+        <div *ngIf="clusters.length === 0" class="text-muted small">No clusters available.</div>
+        <ul *ngIf="clusters.length > 0" class="list-group list-group-flush">
+          <li *ngFor="let c of clusters" class="list-group-item d-flex justify-content-between">
+            <span>{{ c.label || ('Cluster #' + c.clusterId) }}</span>
+            <span class="badge bg-secondary">{{ c.memberCount }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Close Pairs ({{ closePairs.length }})</h5>
+        <div *ngIf="closePairs.length === 0" class="text-muted small">No close pairs at current threshold.</div>
+        <ul *ngIf="closePairs.length > 0" class="list-group list-group-flush">
+          <li *ngFor="let p of closePairs" class="list-group-item">
+            #{{ p.publication1Id }} ↔ #{{ p.publication2Id }}
+            <span class="float-end badge bg-primary-subtle text-primary">{{ p.similarityScore | number:'1.2-2' }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

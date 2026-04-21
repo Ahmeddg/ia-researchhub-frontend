@@ -1,39 +1,242 @@
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">News</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewsModal">Add New</button>
-    </div>
-    <div class="row mt-3">
-        <div class="col-md-6 mb-3" *ngFor="let item of newsList">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">{{ item.title }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ item.createdAt | date:'medium' }}</h6>
-                    <p class="card-text">{{ item.content }}</p>
-                </div>
-                <div class="card-footer bg-transparent">
-                    <small class="text-muted">Posted by: {{ item.user?.username || 'Unknown' }}</small>
-                </div>
+<div class="hero-wrap hero-wrap-2"
+    style="background-image: url(assets/images/news.png); background-size: cover; background-repeat: no-repeat; background-position: center;"
+    data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container-fluid">
+        <div class="row no-gutters d-flex slider-text align-items-center justify-content-center">
+            <div class="col-md-6 ftco-animated fadeInUp text-center">
+                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>News</span></p>
+                <h1 class="mb-3 bread">Our News</h1>
             </div>
         </div>
     </div>
-    <div class="alert alert-info" *ngIf="newsList.length === 0">No news articles found.</div>
 </div>
 
-<!-- Add News Modal -->
+<div class="news-container mt-1">
+
+    <!-- Page Header -->
+    <header class="news-header">
+        <h1>Science News</h1>
+        <p>Latest breakthroughs, policy updates, and events from the global research community</p>
+    </header>
+
+    <!-- Featured Section -->
+    <section class="featured-section" *ngIf="getCurrentFeatured()">
+        <div class="section-label">
+            <div class="pulse-dot"></div>
+            <span>Featured Story</span>
+            <span class="ms-auto featured-counter" *ngIf="featuredArticles().length > 1">
+                {{ currentFeaturedIndex() + 1 }} / {{ featuredArticles().length }}
+            </span>
+        </div>
+
+        <div class="featured-card-wrapper" *ngIf="getCurrentFeatured()?.id">
+
+            <!-- Bouton Précédent -->
+            <button class="featured-nav-btn featured-nav-prev"
+                    (click)="previousFeatured()"
+                    *ngIf="featuredArticles().length > 1"
+                    title="Previous featured story">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <!-- Featured Card avec classes de transition dynamiques -->
+            <div class="featured-card"
+                 [class.slide-in-right]="isTransitioning() && slideDirection() === 'right'"
+                 [class.slide-in-left]="isTransitioning() && slideDirection() === 'left'">
+
+                <div class="featured-img-wrap">
+                    <img [src]="getCurrentFeatured()?.imageUrl || 'assets/images/news-placeholder.jpg'"
+                         [alt]="getCurrentFeatured()?.title">
+                </div>
+
+                <div class="featured-overlay"></div>
+
+                <div class="featured-content">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="badge-custom"
+                              [ngClass]="'bg-' + (getCurrentFeatured()?.category?.toLowerCase() || 'research')">
+                            {{ getCurrentFeatured()?.category }}
+                        </span>
+                        <span class="text-white opacity-75 small d-flex align-items-center gap-1">
+                            <i class="far fa-clock" style="font-size: 10px;"></i>
+                            {{ getCurrentFeatured()?.readTime }} min read
+                        </span>
+                    </div>
+                    <h2>{{ getCurrentFeatured()?.title }}</h2>
+                    <p class="featured-excerpt">{{ getCurrentFeatured()?.excerpt }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-white small">
+                            <span class="fw-bold">
+                                {{ getCurrentFeatured()?.author || getCurrentFeatured()?.user?.username || 'SciShare' }}
+                            </span>
+                            <span class="mx-2 opacity-50">•</span>
+                            <span class="opacity-50">
+                                {{ getCurrentFeatured()?.publishedAt || (getCurrentFeatured()?.createdAt | date:'MMMM d, y') }}
+                            </span>
+                        </div>
+                        <a href="javascript:void(0)" class="read-more-link"
+                           [routerLink]="['/news', getCurrentFeatured()?.id]">
+                            Read more <i class="fas fa-arrow-right" style="font-size: 11px;"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Boutons Edit / Delete (admin/moderator) -->
+                <div class="featured-actions" *ngIf="authService.isAdminOrModerator()">
+                    <button class="featured-action-btn featured-edit-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editNewsModal"
+                            (click)="editNews(getCurrentFeatured()!); $event.stopPropagation()"
+                            title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="featured-action-btn featured-delete-btn"
+                            (click)="deleteNews(getCurrentFeatured()!); $event.stopPropagation()"
+                            title="Delete">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+
+                <!-- Barre de progression auto-rotation -->
+                <div class="featured-progress" *ngIf="featuredArticles().length > 1"></div>
+
+            </div>
+
+            <!-- Bouton Suivant -->
+            <button class="featured-nav-btn featured-nav-next"
+                    (click)="nextFeatured()"
+                    *ngIf="featuredArticles().length > 1"
+                    title="Next featured story">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <!-- Dots de navigation -->
+        <div class="featured-dots" *ngIf="featuredArticles().length > 1">
+            <button class="featured-dot"
+                    *ngFor="let article of featuredArticles(); let i = index"
+                    [class.active]="i === currentFeaturedIndex()"
+                    (click)="goToFeatured(i)"
+                    [title]="article.title">
+            </button>
+        </div>
+    </section>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+        <button *ngFor="let cat of categories"
+                class="tab-btn"
+                [class.active]="activeCategory() === cat"
+                (click)="setCategory(cat)">
+            {{ cat }}
+            <span class="count-badge">{{ getArticleCount(cat) }}</span>
+        </button>
+        <div class="ms-auto" *ngIf="authService.canManageContent()">
+            <button class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addNewsModal"
+                    (click)="openAddModal()">
+                <i class="fas fa-plus mr-1"></i> Post News
+            </button>
+        </div>
+    </div>
+
+    <!-- Article Grid -->
+    <div class="news-grid" *ngIf="filteredNews().length > 0; else noNews">
+        <article class="news-card"
+                 *ngFor="let item of filteredNews()"
+                 [routerLink]="item.id ? ['/news', item.id] : []"
+                 style="cursor: pointer;">
+            <div class="card-img">
+                <img [src]="item.imageUrl || 'assets/images/news-placeholder.jpg'" [alt]="item.title">
+                <div class="card-badge">
+                    <span class="badge-custom" [ngClass]="'bg-' + (item.category?.toLowerCase() || 'research')">
+                        {{ item.category }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">{{ item.title }}</h3>
+                <p class="card-excerpt">{{ item.excerpt || (item.content | slice:0:120) + '...' }}</p>
+                <div class="card-tags mt-auto">
+                    <span *ngFor="let tag of getTagsArray(item.tags)" class="card-tag">
+                        <i class="fas fa-tag" style="font-size: 9px; opacity: 0.7;"></i>{{ tag }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="author-info">
+                    <span class="author-name">{{ item.author || item.user?.username || 'Researcher' }}</span>
+                    <span class="publish-date">{{ item.publishedAt || (item.createdAt | date:'MMMM d, y') }}</span>
+                </div>
+                <div class="read-time">
+                    <i class="far fa-clock"></i> {{ item.readTime || 5 }} min
+                </div>
+                <div class="action-buttons" *ngIf="authService.isAdminOrModerator()" (click)="$event.stopPropagation()">
+                    <button class="btn btn-sm btn-outline-primary rounded-circle p-2"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editNewsModal"
+                            (click)="editNews(item)"
+                            title="Edit"
+                            style="border: none;">
+                        <i class="fas fa-edit text-primary"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light rounded-circle p-2 shadow-sm border-0"
+                            (click)="deleteNews(item)"
+                            title="Delete">
+                        <i class="fas fa-trash-alt text-danger"></i>
+                    </button>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <ng-template #noNews>
+        <div class="text-center py-5 border rounded-20 bg-white">
+            <p class="text-muted">No news articles found in this category.</p>
+        </div>
+    </ng-template>
+</div>
+
+<!-- Modal : Ajouter un article -->
 <div class="modal fade" id="addNewsModal" tabindex="-1" aria-labelledby="addNewsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addNewsModalLabel">Add New News</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="closeAddModal()"></button>
             </div>
             <div class="modal-body">
-                <app-news-form (saveSuccess)="onSaveSuccess()"></app-news-form>
+                <app-news-form *ngIf="showAddForm()" (saveSuccess)="onSaveSuccess()"></app-news-form>
             </div>
             <div class="modal-footer">
                 <button type="button" id="closeAddNewsModal" class="btn btn-secondary"
-                    data-bs-dismiss="modal">Cancel</button>
+                        data-bs-dismiss="modal" (click)="closeAddModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal : Modifier un article -->
+<div class="modal fade" id="editNewsModal" tabindex="-1" aria-labelledby="editNewsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editNewsModalLabel">Edit News Article</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="closeEditModal()"></button>
+            </div>
+            <div class="modal-body">
+                <app-news-form *ngIf="selectedNews()"
+                               [editingNews]="selectedNews()"
+                               (saveSuccess)="onSaveSuccess()">
+                </app-news-form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal" (click)="closeEditModal()">Cancel</button>
             </div>
         </div>
     </div>

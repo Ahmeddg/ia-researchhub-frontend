@@ -1,43 +1,98 @@
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Domains</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDomainModal">Add New</button>
+<div class="hero-wrap hero-wrap-2"
+    style="background-image: url(assets/images/researchers.png); background-size: cover; background-repeat: no-repeat; background-position: center;"
+    data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container-fluid">
+        <div class="row no-gutters d-flex slider-text align-items-center justify-content-center">
+            <div class="col-md-6 ftco-animated fadeInUp text-center">
+                <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home</a></span> <span>Domains</span></p>
+                <h1 class="mb-3 bread">Research Domains</h1>
+            </div>
+        </div>
     </div>
-    <table class="table table-striped table-hover mt-3">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let domain of domains">
-                <td>{{ domain.id }}</td>
-                <td>{{ domain.name }}</td>
-                <td>{{ domain.description }}</td>
-            </tr>
-            <tr *ngIf="domains.length === 0">
-                <td colspan="3" class="text-center">No domains found</td>
-            </tr>
-        </tbody>
-    </table>
 </div>
 
-<!-- Add Domain Modal -->
-<div class="modal fade" id="addDomainModal" tabindex="-1" aria-labelledby="addDomainModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addDomainModalLabel">Add New Domain</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="fw-bold mb-0">Research Domains</h2>
+        <button *ngIf="authService.isAdminOrModerator()" 
+                class="btn btn-primary rounded-pill px-4 fw-bold" 
+                (click)="openAddDomainModal()">
+            <i class="bi bi-plus-lg me-2"></i>Add New Domain
+        </button>
+    </div>
+
+    <!-- Domains Grid -->
+    <div class="row g-4">
+        <div *ngFor="let domain of domains()" class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100 domain-card transition-all">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="flex-grow-1">
+                            <h5 class="card-title fw-bold mb-2">{{ domain.name }}</h5>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="text-muted small mb-0">
+                            <strong>Description:</strong> {{ domain.description }}
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 pt-3 border-top" *ngIf="authService.isAdminOrModerator()">
+                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3 flex-grow-1" 
+                                (click)="editDomain(domain)"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editDomainModal"
+                                title="Edit domain">
+                            <i class="bi bi-pencil me-2"></i>Edit
+                        </button>
+                        <button class="btn btn-sm btn-light rounded-circle p-2 shadow-sm border-0" 
+                                (click)="deleteDomain(domain.id!)" 
+                                title="Delete domain">
+                            <i class="fas fa-trash-alt text-danger"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <app-domain-form (saveSuccess)="onSaveSuccess()"></app-domain-form>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="domains().length === 0" class="col-12">
+            <div class="text-center py-5">
+                <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                <p class="text-muted mt-3">No domains found. 
+                    <span *ngIf="authService.isAdminOrModerator()">
+                        <a href="#" (click)="openAddDomainModal(); $event.preventDefault()" data-bs-toggle="modal" data-bs-target="#editDomainModal">Add one now!</a>
+                    </span>
+                </p>
             </div>
-            <div class="modal-footer">
-                <button type="button" id="closeAddDomainModal" class="btn btn-secondary"
-                    data-bs-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Domain Modal -->
+<div class="modal fade" id="editDomainModal" tabindex="-1" aria-labelledby="editDomainModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pt-4 px-4 pb-0">
+                <h5 class="modal-title fw-bold" id="editDomainModalLabel">
+                    {{ isEditMode() ? 'Edit Domain: ' + selectedDomain()?.name : 'Add New Domain' }}
+                </h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <app-domain-form 
+                    [domain]="selectedDomain()" 
+                    [isEditMode]="isEditMode()"
+                    (saveSuccess)="onSaveSuccess()">
+                </app-domain-form>
+            </div>
+            <div class="modal-footer border-0 p-4">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                    Cancel
+                </button>
             </div>
         </div>
     </div>

@@ -1,28 +1,232 @@
-<form (ngSubmit)="onSubmit()" #publicationForm="ngForm">
-    <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
-        <input type="text" class="form-control" id="title" name="title" [(ngModel)]="publication.title" required>
+<!-- ═══════════════════════════════════════ STEP INDICATOR ════════════════════════════════════ -->
+<div class="wizard-progress">
+  <div class="step-item" [class.active]="currentStep === 'form'" [class.done]="currentStep === 'review'">
+    <div class="step-circle">
+      <span *ngIf="currentStep !== 'review'">1</span>
+      <span *ngIf="currentStep === 'review'" class="step-check">✓</span>
     </div>
-    <div class="mb-3">
-        <label for="abstractText" class="form-label">Abstract</label>
-        <textarea class="form-control" id="abstractText" name="abstractText" rows="3"
-            [(ngModel)]="publication.abstractText" required></textarea>
+    <span class="step-label">Publication Details</span>
+  </div>
+  <div class="step-connector" [class.done]="currentStep === 'review'"></div>
+  <div class="step-item" [class.active]="currentStep === 'review'">
+    <div class="step-circle">2</div>
+    <span class="step-label">AI Review</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ STEP 1: FORM ══════════════════════════════════════ -->
+<div *ngIf="currentStep === 'form'" class="wizard-panel">
+
+  <form #publicationForm="ngForm" class="pub-form">
+
+    <!-- Title -->
+    <div class="field-group">
+      <label class="field-label" for="title">Title <span class="required">*</span></label>
+      <input id="title" type="text" class="field-input" name="title"
+             [(ngModel)]="publication.title" required minlength="2"
+             placeholder="Publication title..." #titleField="ngModel">
+      <div class="field-error" *ngIf="titleField.invalid && titleField.touched">Title is required (min 2 chars).</div>
     </div>
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label for="publicationDate" class="form-label">Publication Date</label>
-            <input type="date" class="form-control" id="publicationDate" name="publicationDate"
-                [(ngModel)]="publication.publicationDate" required>
-        </div>
-        <div class="col-md-4 mb-3">
-            <label for="doi" class="form-label">DOI</label>
-            <input type="text" class="form-control" id="doi" name="doi" [(ngModel)]="publication.doi" required>
-        </div>
-        <div class="col-md-4 mb-3">
-            <label for="pdfUrl" class="form-label">PDF URL</label>
-            <input type="url" class="form-control" id="pdfUrl" name="pdfUrl" [(ngModel)]="publication.pdfUrl">
-        </div>
+
+    <!-- Abstract -->
+    <div class="field-group">
+      <label class="field-label" for="abstractText">Abstract <span class="required">*</span></label>
+      <textarea id="abstractText" class="field-input field-textarea" name="abstractText" rows="5"
+                [(ngModel)]="publication.abstractText" required
+                placeholder="Paste your abstract here... The AI will read this to classify your publication."
+                #abstractField="ngModel"></textarea>
+      <div class="field-error" *ngIf="abstractField.invalid && abstractField.touched">Abstract is required.</div>
     </div>
-    <button type="submit" class="btn btn-primary" [disabled]="!publicationForm.form.valid">Save</button>
-    <button type="button" class="btn btn-secondary ms-2" (click)="publicationForm.reset()">Reset</button>
-</form>
+
+    <!-- Domain (required for classification) -->
+    <div class="field-group">
+      <label class="field-label" for="domain">Research Domain <span class="required">*</span></label>
+      <select id="domain" class="field-input field-select" name="domain"
+              [(ngModel)]="selectedDomainId" required #domainField="ngModel">
+        <option [ngValue]="null" disabled>Select a domain...</option>
+        <option *ngFor="let d of domains" [ngValue]="d.id">{{ d.name }}</option>
+      </select>
+      <div class="field-error" *ngIf="domainField.invalid && domainField.touched">Please select a domain.</div>
+    </div>
+
+    <!-- Row: Date, DOI, PDF URL -->
+    <div class="fields-row">
+      <div class="field-group">
+        <label class="field-label" for="publicationDate">Publication Date</label>
+        <input id="publicationDate" type="date" class="field-input" name="publicationDate"
+               [(ngModel)]="publication.publicationDate">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="doi">DOI</label>
+        <input id="doi" type="text" class="field-input" name="doi"
+               [(ngModel)]="publication.doi" placeholder="10.xxxx/xxxxx">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="pdfUrl">PDF URL <span class="hint">(improves accuracy)</span></label>
+        <input id="pdfUrl" type="url" class="field-input" name="pdfUrl"
+               [(ngModel)]="publication.pdfUrl" placeholder="https://arxiv.org/pdf/...">
+      </div>
+    </div>
+
+    <!-- Row: Journal, Image URL (optional) -->
+    <div class="fields-row">
+      <div class="field-group">
+        <label class="field-label" for="journal">Journal</label>
+        <input id="journal" type="text" class="field-input" name="journal"
+               [(ngModel)]="publication.journal" placeholder="Nature, IEEE, ACM...">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="imageUrl">Image URL</label>
+        <input id="imageUrl" type="url" class="field-input" name="imageUrl"
+               [(ngModel)]="publication.imageUrl" placeholder="https://.../cover.jpg">
+      </div>
+    </div>
+
+    <!-- Error alert -->
+    <div class="alert-error" *ngIf="classifyError">
+      <span class="alert-icon">⚠</span> {{ classifyError }}
+    </div>
+
+    <!-- Action: Classify -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-classify"
+              [disabled]="publicationForm.form.invalid || !selectedDomainId || isClassifying"
+              (click)="onClassify()">
+        <span *ngIf="!isClassifying" class="btn-icon">✦</span>
+        <span *ngIf="isClassifying" class="btn-spinner"></span>
+        {{ isClassifying ? 'Classifying...' : 'Classify & Preview' }}
+      </button>
+      <p class="classify-hint">Publication is saved as draft. You'll review AI results before publishing.</p>
+    </div>
+
+  </form>
+</div>
+
+<!-- ═══════════════════════════════════════ STEP 2: AI REVIEW ════════════════════════════════ -->
+<div *ngIf="currentStep === 'review'" class="wizard-panel review-panel">
+
+  <!-- Header with cluster info -->
+  <div class="cluster-header">
+    <div class="cluster-info">
+      <div class="cluster-badge" [class.outlier]="isOutlier">
+        <span class="cluster-icon">◈</span>
+        <span class="cluster-label">{{ isOutlier ? 'Unclustered (New)' : (classification?.clusterLabel || 'No cluster') }}</span>
+      </div>
+      <div *ngIf="isOutlier && classification?.suggestedClusterLabel" class="cluster-suggestion">
+        <span class="suggestion-icon">💡</span>
+        Closest cluster: <strong>{{ classification?.suggestedClusterLabel }}</strong>
+      </div>
+    </div>
+
+    <div class="confidence-block">
+      <span class="confidence-label">Classification Confidence</span>
+      <div class="confidence-bar-track">
+        <div class="confidence-bar-fill"
+             [style.width.%]="confidencePercent"
+             [style.background]="confidenceColor">
+        </div>
+      </div>
+      <span class="confidence-value" [style.color]="confidenceColor">{{ confidencePercent }}%</span>
+    </div>
+  </div>
+
+  <!-- No classification fallback -->
+  <div *ngIf="!classification" class="no-classification-notice">
+    <span class="notice-icon">ℹ</span>
+    The classification service is currently unavailable. Your draft was saved — you can still publish it without AI metadata.
+  </div>
+
+  <!-- ── Categories ── -->
+  <div *ngIf="classification" class="review-section">
+    <div class="section-header">
+      <h4 class="section-title">
+        <span class="section-icon">🏷</span> Predicted Categories
+        <span class="section-count">{{ editableCategories.length }}</span>
+      </h4>
+      <p class="section-hint">Remove or rename categories that don't fit your publication.</p>
+    </div>
+
+    <div class="categories-list">
+      <div *ngFor="let cat of editableCategories; let i = index" class="category-card">
+
+        <!-- View mode -->
+        <ng-container *ngIf="!cat.editing">
+          <div class="category-top">
+            <span class="category-name">{{ cat.category }}</span>
+            <div class="category-actions">
+              <button class="action-btn edit-btn" title="Edit category" (click)="startEditCategory(i)">✏</button>
+              <button class="action-btn remove-btn" title="Remove category" (click)="removeCategory(i)">✕</button>
+            </div>
+          </div>
+          <div class="category-meta">
+            <div class="cat-confidence-bar">
+              <div class="cat-confidence-fill" [style.width.%]="(cat.confidence * 100)"></div>
+            </div>
+            <span class="cat-confidence-val">{{ (cat.confidence * 100).toFixed(0) }}%</span>
+          </div>
+          <p class="category-reason" *ngIf="cat.reason">{{ cat.reason }}</p>
+        </ng-container>
+
+        <!-- Edit mode -->
+        <ng-container *ngIf="cat.editing">
+          <div class="category-edit-row">
+            <input class="field-input edit-inline-input" [(ngModel)]="cat.editValue"
+                   [name]="'catEdit' + i" (keydown.enter)="saveEditCategory(i)">
+            <button class="action-btn save-btn" title="Save" (click)="saveEditCategory(i)">✓</button>
+            <button class="action-btn cancel-btn" title="Cancel" (click)="cancelEditCategory(i)">✕</button>
+          </div>
+        </ng-container>
+
+      </div>
+
+      <div *ngIf="editableCategories.length === 0" class="empty-notice">
+        No categories — all were removed.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Keywords ── -->
+  <div *ngIf="classification" class="review-section">
+    <div class="section-header">
+      <h4 class="section-title">
+        <span class="section-icon">🔑</span> Keywords
+        <span class="section-count">{{ editableKeywords.length }}</span>
+      </h4>
+      <p class="section-hint">Remove irrelevant keywords or add new ones.</p>
+    </div>
+
+    <div class="keywords-area">
+      <div class="keyword-chips">
+        <span *ngFor="let kw of editableKeywords; let i = index" class="keyword-chip">
+          {{ kw }}
+          <button class="chip-remove" (click)="removeKeyword(i)" title="Remove">×</button>
+        </span>
+      </div>
+      <div class="keyword-add-row">
+        <input class="field-input keyword-add-input" type="text"
+               name="newKeyword" [(ngModel)]="newKeywordInput"
+               (keydown)="onKeywordInputKeydown($event)"
+               placeholder="Add keyword and press Enter...">
+        <button class="btn btn-add-keyword" (click)="addKeyword()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error alert -->
+  <div class="alert-error" *ngIf="confirmError">
+    <span class="alert-icon">⚠</span> {{ confirmError }}
+  </div>
+
+  <!-- Actions -->
+  <div class="form-actions review-actions">
+    <button class="btn btn-back" (click)="goBackToForm()" [disabled]="isConfirming">
+      ← Back & Edit
+    </button>
+    <button class="btn btn-confirm" (click)="onConfirm()" [disabled]="isConfirming">
+      <span *ngIf="!isConfirming" class="btn-icon">✔</span>
+      <span *ngIf="isConfirming" class="btn-spinner"></span>
+      {{ isConfirming ? 'Publishing...' : 'Confirm & Publish' }}
+    </button>
+  </div>
+
+</div>

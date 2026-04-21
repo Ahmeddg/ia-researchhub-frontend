@@ -1,0 +1,53 @@
+.bg-primary-soft {
+    background-color: rgba(99, 102, 241, 0.1);
+}
+
+.text-primary {
+    color: #6366f1 !important;
+}
+
+.focus-primary:focus {
+    background-color: #fff !important;
+    box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.1) !important;
+    border: 1px solid #6366f1 !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.search-results {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+}
+
+.search-item {
+    transition: background-color 0.2s;
+}
+
+.search-item:hover {
+    background-color: #f8f9fa;
+}
+
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+}
+
+.hover-bg-light:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-primary {
+    background-color: #6366f1;
+    border-color: #6366f1;
+}
+
+.btn-primary:hover {
+    background-color: #4f46e5;
+}
+
+.z-3 {
+    z-index: 1030;
+}
