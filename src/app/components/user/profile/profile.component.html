@@ -1,0 +1,72 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg profile-card overflow-hidden">
+                <div class="card-header bg-gradient-premium text-white p-5 text-center position-relative">
+                    <div class="avatar-container mb-3">
+                        <div class="avatar-placeholder mx-auto shadow">
+                            {{ userProfile()?.username ? userProfile()!.username.charAt(0).toUpperCase() : 'U' }}
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-0">{{ userProfile()?.username }}</h2>
+                    <p class="opacity-75 mb-0">{{ userProfile()?.email }}</p>
+                </div>
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0 text-dark">Profile Details</h4>
+                        <button class="btn btn-outline-primary btn-sm rounded-pill px-4" (click)="toggleEdit()">
+                            <i class="bi" [ngClass]="editMode() ? 'bi-x-lg' : 'bi-pencil-square'"></i>
+                            {{ editMode() ? 'Cancel' : 'Edit Profile' }}
+                        </button>
+                    </div>
+
+                    <ng-container *ngIf="!editMode()">
+                        <div class="profile-info-grid">
+                            <div class="info-item p-3 rounded-3 bg-light mb-3">
+                                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Username</label>
+                                <span class="h6 mb-0">{{ userProfile()?.username }}</span>
+                            </div>
+                            <div class="info-item p-3 rounded-3 bg-light mb-3">
+                                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Email Address</label>
+                                <span class="h6 mb-0">{{ userProfile()?.email }}</span>
+                            </div>
+                            <div class="info-item p-3 rounded-3 bg-light mb-3">
+                                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Accout Status</label>
+                                <span class="badge" [ngClass]="userProfile()?.enabled ? 'bg-success-soft text-success' : 'bg-danger-soft text-danger'">
+                                    {{ userProfile()?.enabled ? 'Active' : 'Disabled' }}
+                                </span>
+                            </div>
+                            <div class="info-item p-3 rounded-3 bg-light mb-0">
+                                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Assigned Roles</label>
+                                <div class="d-flex flex-wrap gap-2 pt-1">
+                                    <span *ngFor="let role of userProfile()?.roles" class="badge bg-primary-soft text-primary">
+                                        {{ role.replace('ROLE_', '') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <form *ngIf="editMode()" (ngSubmit)="updateProfile()">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Email Address</label>
+                            <input type="email" class="form-control form-control-lg bg-light border-0 shadow-none focus-primary" 
+                                   [(ngModel)]="editData.email" name="email" required>
+                            <div class="form-text">We'll never share your email with anyone else.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">New Password (leave blank to keep current)</label>
+                            <input type="password" class="form-control form-control-lg bg-light border-0 shadow-none focus-primary" 
+                                   [(ngModel)]="editData.password" name="password">
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm py-3 fw-bold">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

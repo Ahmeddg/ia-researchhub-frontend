@@ -1,0 +1,67 @@
+/* You can add global styles to this file, and also import other style files */
+.ftco-navbar-light {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1030 !important;
+    margin-top: 0 !important;
+    background: #fff !important;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.ftco-navbar-light.scrolled {
+    position: sticky !important;
+    margin-top: 0 !important;
+}
+
+/* Premium UI Utilities */
+:root {
+    --primary-soft: rgba(0, 123, 255, 0.1);
+    --success-soft: rgba(40, 167, 69, 0.1);
+    --info-soft: rgba(23, 162, 184, 0.1);
+    --danger-soft: rgba(220, 53, 69, 0.1);
+    --warning-soft: rgba(255, 193, 7, 0.1);
+}
+
+.bg-primary-soft { background-color: var(--primary-soft) !important; }
+.bg-success-soft { background-color: var(--success-soft) !important; }
+.bg-info-soft { background-color: var(--info-soft) !important; }
+.bg-danger-soft { background-color: var(--danger-soft) !important; }
+.bg-warning-soft { background-color: var(--warning-soft) !important; }
+
+.text-primary { color: #007bff !important; }
+.text-success { color: #28a745 !important; }
+.text-info { color: #17a2b8 !important; }
+.text-danger { color: #dc3545 !important; }
+
+.rounded-20 { border-radius: 20px !important; }
+.cursor-pointer { cursor: pointer !important; }
+
+.hover-bg-light:hover { background-color: #f8f9fa !important; }
+
+.bg-gradient-premium {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.avatar-placeholder {
+    width: 80px;
+    height: 80px;
+    background: white;
+    color: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.search-results {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+}

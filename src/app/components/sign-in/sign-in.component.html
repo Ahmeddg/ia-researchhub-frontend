@@ -1,0 +1,67 @@
+<div class="container-fluid">
+    <div class="slider-text d-md-flex align-items-center">
+
+        <!-- Left Side: Form -->
+        <div class="one-half ftco-animated fadeInUp align-self-md-center p-md-5">
+            <div class="signup-card shadow-lg p-4 bg-white rounded-3">
+                <div class="signup-header text-center mb-4">
+                    <div class="signup-icon mb-3">
+                        <i class="fas fa-sign-in-alt text-primary fs-1"></i>
+                    </div>
+                    <h2 class="fw-bold">Welcome Back</h2>
+                    <p class="text-muted">Enter your credentials to access your account</p>
+                </div>
+
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group mb-3">
+                        <label for="identifier" class="form-label fw-semibold">Email or Username</label>
+                        <input id="identifier" type="text" formControlName="identifier" class="form-control form-control-lg" 
+                            [class.is-invalid]="loginForm.get('identifier')?.invalid && loginForm.get('identifier')?.touched"
+                            placeholder="Enter email or username" required autofocus>
+                        <div class="invalid-feedback" *ngIf="loginForm.get('identifier')?.invalid && loginForm.get('identifier')?.touched">
+                            Please enter your email or username.
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label for="password" class="form-label fw-semibold mb-0">Password</label>
+                            <a href="#" class="text-primary text-decoration-none small fw-bold">Forgot Password?</a>
+                        </div>
+                        <input id="password" type="password" formControlName="password" class="form-control form-control-lg"
+                            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                            placeholder="Enter your password" required>
+                        <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                            Password is required (min 6 characters).
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" formControlName="rememberMe" id="rememberMe">
+                        <label class="form-check-label text-muted" for="rememberMe">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary btn-lg signup-btn shadow-sm" type="submit">
+                            Sign In
+                        </button>
+                    </div>
+
+                    <p class="text-center mt-4 mb-0 text-muted">
+                        Don't have an account? <a routerLink="/sign-up"
+                            class="text-primary text-decoration-none fw-bold">Sign Up</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Side: Decorative Image/Illustration -->
+        <div class="one-half align-self-md-center text-center p-md-5 d-none d-md-block">
+            <img src="assets/images/signup.svg" class="img-fluid ftco-animated fadeInRight" alt="Sign In Illustration"
+                style="max-height: 500px; filter: hue-rotate(15deg);">
+        </div>
+
+    </div>
+</div>

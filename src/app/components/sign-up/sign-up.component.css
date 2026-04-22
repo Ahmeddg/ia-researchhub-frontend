@@ -1,0 +1,67 @@
+.hero-wrap {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: '';
+    opacity: .3;
+
+}
+
+.signup-card {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.signup-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.form-control-lg {
+    font-size: 1rem;
+    padding: 0.8rem 1.25rem;
+    border-radius: 10px;
+}
+
+.signup-btn {
+    padding: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    background: #3b82f6;
+    border-color: #3b82f6;
+    transition: all 0.3s ease;
+}
+
+.signup-btn:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+}
+
+@media (max-width: 767.98px) {
+    .one-half {
+        width: 100%;
+        padding: 2rem 1rem !important;
+    }
+}

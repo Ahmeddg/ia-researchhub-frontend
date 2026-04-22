@@ -1,0 +1,63 @@
+<form (ngSubmit)="onSubmit()" #researcherForm="ngForm" class="p-3">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <label for="fullName" class="form-label fw-bold small text-uppercase text-muted">Full Name</label>
+            <input type="text"
+                   class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary"
+                   id="fullName"
+                   name="fullName"
+                   [(ngModel)]="formModel.fullName"
+                   required
+                   placeholder="Enter full name">
+        </div>
+        <div class="col-md-6 mb-4">
+            <label for="email" class="form-label fw-bold small text-uppercase text-muted">Email</label>
+            <input type="email"
+                   class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary"
+                   id="email"
+                   name="email"
+                   [(ngModel)]="formModel.email"
+                   required
+                   placeholder="name@example.com">
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <label for="affiliation" class="form-label fw-bold small text-uppercase text-muted">Affiliation</label>
+        <input type="text"
+               class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary"
+               id="affiliation"
+               name="affiliation"
+               [(ngModel)]="formModel.affiliation"
+               required
+               placeholder="University, lab or organization">
+    </div>
+
+    <div class="mb-4">
+        <label for="biography" class="form-label fw-bold small text-uppercase text-muted">Biography</label>
+        <textarea class="form-control border-0 bg-light py-2 px-3 shadow-none focus-primary"
+                  id="biography"
+                  name="biography"
+                  rows="4"
+                  [(ngModel)]="formModel.biography"
+                  placeholder="Short biography or research interests..."></textarea>
+    </div>
+
+    <div class="d-flex gap-2 pt-3">
+        <button type="submit"
+                class="btn btn-primary rounded-pill px-5 py-2 fw-bold flex-grow-1 shadow-sm"
+                [disabled]="isSubmitting || !researcherForm.form.valid">
+            <i class="bi bi-check-lg me-2"></i>
+            <span *ngIf="!isSubmitting">{{ isEditMode ? 'Update Researcher' : 'Create Researcher' }}</span>
+            <span *ngIf="isSubmitting">
+                <span class="spinner-border spinner-border-sm me-2"></span>Processing...
+            </span>
+        </button>
+        <button type="button"
+                class="btn btn-light rounded-pill px-4 py-2 fw-semibold"
+                (click)="resetForm()"
+                [disabled]="isSubmitting">
+            Reset
+        </button>
+    </div>
+</form>
