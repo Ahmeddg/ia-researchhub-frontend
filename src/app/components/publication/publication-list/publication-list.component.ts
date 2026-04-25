@@ -43,13 +43,25 @@ export class PublicationListComponent implements OnInit {
     } else {
       switch (this.activeSort) {
         case 'recommended':
-          this.publicationService.getPersonalized().subscribe({
-            next: (data) => this.publications = data,
-            error: (err) => {
-              console.error('Personalized feed failed', err);
-              this.publications = []; // Keep it empty but don't crash
-            }
-          });
+          if (this.authService.isLoggedIn()) {
+            this.publicationService.getPersonalized().subscribe({
+              next: (data) => this.publications = data,
+              error: (err) => {
+                console.error('Personalized feed failed', err);
+                // Fallback to all publications on error
+                this.publicationService.getAll().subscribe({
+                  next: (all) => this.publications = all,
+                  error: () => this.publications = []
+                });
+              }
+            });
+          } else {
+            // Not logged in — show all publications as default
+            this.publicationService.getAll().subscribe({
+              next: (data) => this.publications = data,
+              error: (err) => console.error('Default feed failed', err)
+            });
+          }
           break;
         case 'new':
           this.publicationService.getNew().subscribe({
@@ -116,9 +128,14 @@ export class PublicationListComponent implements OnInit {
         if (index !== -1) {
           this.publications[index].upvotes = updated.upvotes;
           this.publications[index].downvotes = updated.downvotes;
+          if (this.publications[index].upvotedByUser) {
+             this.publications[index].upvotedByUser = false;
+          } else {
+             this.publications[index].upvotedByUser = true;
+          }
         }
       },
-      error: (err) => console.error('Error upvoting', err)
+      error: (err) => alert('Erreur lors du vote. Êtes-vous connecté ?')
     });
   }
 
@@ -127,11 +144,12 @@ export class PublicationListComponent implements OnInit {
       next: (updated) => {
         const index = this.publications.findIndex(p => p.id === id);
         if (index !== -1) {
-          this.publications[index].upvotes = updated.upvotes;
-          this.publications[index].downvotes = updated.downvotes;
+           this.publications[index].upvotes = updated.upvotes;
+           this.publications[index].downvotes = updated.downvotes;
+           this.publications[index].upvotedByUser = false; 
         }
       },
-      error: (err) => console.error('Error downvoting', err)
+      error: (err) => alert('Erreur lors du vote. Êtes-vous connecté ?')
     });
   }
 }

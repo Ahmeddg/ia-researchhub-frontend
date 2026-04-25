@@ -22,18 +22,22 @@ export class ResearcherFormComponent implements OnInit, OnChanges {
   isSubmitting = false;
 
   ngOnInit(): void {
-    if (this.researcher && this.isEditMode) {
-      this.formModel = { ...this.researcher };
-    }
+    this.syncFormWithInputs();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['researcher'] && this.researcher) {
-      this.formModel = { ...this.researcher };
+    if (changes['researcher'] || changes['isEditMode']) {
+      this.syncFormWithInputs();
     }
-    if (changes['isEditMode'] && this.isEditMode && this.researcher) {
+  }
+
+  private syncFormWithInputs(): void {
+    if (this.researcher && this.isEditMode) {
       this.formModel = { ...this.researcher };
+      return;
     }
+
+    this.formModel = { fullName: '', email: '', affiliation: '', biography: '' };
   }
 
   onSubmit() {

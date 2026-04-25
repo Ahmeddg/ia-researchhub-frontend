@@ -39,6 +39,16 @@ export class ResearcherListComponent implements OnInit {
     });
   }
 
+  openAddResearcherModal(): void {
+    if (!this.authService.canManageResearchers()) {
+      this.notificationService.error('You do not have permission to add researchers');
+      return;
+    }
+
+    this.selectedResearcher.set(null);
+    this.isEditMode.set(false);
+  }
+
   deleteResearcher(researcher: Researcher): void {
     if (!researcher.id) return;
     

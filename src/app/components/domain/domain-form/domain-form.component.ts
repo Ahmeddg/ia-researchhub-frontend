@@ -24,23 +24,22 @@ export class DomainFormComponent implements OnInit, OnChanges {
   isSubmitting: boolean = false;
 
   ngOnInit(): void {
-    if (this.domain && this.isEditMode) {
-      this.formDomain = { ...this.domain };
-    } else {
-      this.formDomain = { name: '', description: '' };
-    }
+    this.syncFormWithInputs();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // When parent passes a domain for editing, update the local form model
-    if (changes['domain'] && this.domain && this.isEditMode) {
+    if (changes['domain'] || changes['isEditMode']) {
+      this.syncFormWithInputs();
+    }
+  }
+
+  private syncFormWithInputs(): void {
+    if (this.domain && this.isEditMode) {
       this.formDomain = { ...this.domain };
+      return;
     }
 
-    // If isEditMode becomes true and a domain is present, ensure form is populated
-    if (changes['isEditMode'] && changes['isEditMode'].currentValue === true && this.domain) {
-      this.formDomain = { ...this.domain };
-    }
+    this.formDomain = { name: '', description: '' };
   }
 
   onSubmit(): void {

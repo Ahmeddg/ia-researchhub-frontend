@@ -87,6 +87,6 @@ export class AuthService {
   }
 
   canManageResearchers(): boolean {
-    return this.isAdmin() || this.isModerator() || this.isResearcher();
+    return this.isAdmin() || this.isModerator();
   }
 }

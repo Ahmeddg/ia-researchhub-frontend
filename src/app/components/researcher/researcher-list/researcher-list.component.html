@@ -17,6 +17,7 @@
         <h2 class="fw-bold mb-0">Research Team</h2>
         <button *ngIf="authService.canManageResearchers()" 
                 class="btn btn-primary rounded-pill px-4 fw-bold" 
+                (click)="openAddResearcherModal()"
                 data-bs-toggle="modal" 
                 data-bs-target="#addResearcherModal">
             <i class="bi bi-plus-lg me-2"></i>Add New Researcher

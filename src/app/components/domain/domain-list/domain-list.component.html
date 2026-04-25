@@ -17,7 +17,9 @@
         <h2 class="fw-bold mb-0">Research Domains</h2>
         <button *ngIf="authService.isAdminOrModerator()" 
                 class="btn btn-primary rounded-pill px-4 fw-bold" 
-                (click)="openAddDomainModal()">
+                (click)="openAddDomainModal()"
+                data-bs-toggle="modal"
+                data-bs-target="#editDomainModal">
             <i class="bi bi-plus-lg me-2"></i>Add New Domain
         </button>
     </div>
