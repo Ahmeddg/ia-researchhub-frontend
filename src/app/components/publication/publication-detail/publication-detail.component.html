@@ -1,8 +1,4 @@
-<div class="publication-detail-container" *ngIf="publication">
-    <a routerLink="/publications" class="back-link">
-        <i class="fas fa-arrow-left"></i> Back
-    </a>
-
+<div class="publication-detail-container">
     <div *ngIf="loading" class="text-center p-5">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
@@ -13,155 +9,251 @@
         {{ error }}
     </div>
 
-    <div *ngIf="!loading && publication" class="post-card">
-        <!-- Vote Sidebar -->
-        <div class="vote-sidebar">
-            <button class="vote-btn" (click)="upvote()"><i class="fas fa-arrow-up"></i></button>
-            <span class="vote-count">{{ (publication.upvotes || 0) - (publication.downvotes || 0) }}</span>
-            <button class="vote-btn" (click)="downvote()"><i class="fas fa-arrow-down"></i></button>
-        </div>
+    <div class="dashboard-container" *ngIf="!loading && publication">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <a routerLink="/publications" class="back-link">
+                        <i class="fas fa-arrow-left"></i> Back to Publications
+                    </a>
 
-        <!-- Main Content -->
-        <div class="content-area">
-            <div class="post-header">
-                <span class="category-badge">{{ publication.domain?.name }}</span>
-                <span class="post-meta">Posted by <a href="#" class="text-decoration-none">u/research_hub</a> • 7 hours
-                    ago</span>
-            </div>
-
-            <h1 class="post-title">{{ publication.title }}</h1>
-
-            <div class="info-grid">
-                <div class="info-item">
-                    <i class="fas fa-users"></i>
-                    <div>
-                        <span class="info-label">Authors</span>
-                        <span class="info-value">{{ getAuthors() }}</span>
+                    <div class="sidebar-card">
+                        <h5 class="sidebar-title">Categories</h5>
+                        <nav class="nav flex-column">
+                            <a routerLink="/publications" class="nav-link-custom" [class.active]="selectedDomainId === null">
+                                <i class="fas fa-globe"></i> All
+                            </a>
+                            <a *ngFor="let domain of domains" routerLink="/publications" class="nav-link-custom"
+                               [class.active]="selectedDomainId === domain.id">
+                                <i class="fas" [ngClass]="{
+                                    'fa-microchip': domain.name.includes('Computer') || domain.name.includes('AI'),
+                                    'fa-dna': domain.name.includes('Bio'),
+                                    'fa-flask': domain.name.includes('Chemistry'),
+                                    'fa-atom': domain.name.includes('Physics'),
+                                    'fa-robot': domain.name.includes('Robotics'),
+                                    'fa-chart-bar': domain.name.includes('Data'),
+                                    'fa-eye': domain.name.includes('Vision'),
+                                    'fa-language': domain.name.includes('Language'),
+                                    'fa-stethoscope': domain.name.includes('Medicine'),
+                                    'fa-brain': domain.name.includes('Neuro'),
+                                    'fa-leaf': domain.name.includes('Climate')
+                                }"></i>
+                                {{ domain.name }}
+                            </a>
+                        </nav>
                     </div>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-book"></i>
-                    <div>
-                        <span class="info-label">Journal</span>
-                        <span class="info-value">{{ publication.journal || 'Universal Research Journal' }}</span>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-calendar"></i>
-                    <div>
-                        <span class="info-label">Year</span>
-                        <span class="info-value">{{ getYear() }}</span>
-                    </div>
-                </div>
-            </div>
 
-            <div class="doi-block">
-                <span class="doi-label"><i class="fas fa-link"></i> DOI:</span>
-                <a [href]="'https://doi.org/' + publication.doi" target="_blank" class="doi-link">{{ publication.doi
-                    }}</a>
-            </div>
-
-            <h2 class="section-title">Abstract</h2>
-            <p class="abstract-text">
-                {{ publication.abstractText }}
-            </p>
-
-            <div class="tag-list">
-                <span class="tag">#{{ publication.domain?.name?.replace(' ', '') }}</span>
-                <span class="tag">#ScientificResearch</span>
-                <span class="tag">#Article</span>
-            </div>
-
-            <div class="action-bar">
-                <button class="action-btn active"><i class="fas fa-bookmark"></i> Saved</button>
-                <button class="action-btn"><i class="fas fa-share"></i> Share</button>
-                <a *ngIf="publication.pdfUrl" [href]="publication.pdfUrl" target="_blank" class="action-btn text-decoration-none">
-                    <i class="fas fa-file-pdf"></i> View PDF
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div *ngIf="!loading && publication" class="recommendations-card">
-        <h2 class="section-title mb-3">AI Recommendations</h2>
-        <div *ngIf="recommendationsLoading" class="text-muted small">Loading recommendations...</div>
-        <div *ngIf="recommendationsError" class="alert alert-warning py-2 mb-2">{{ recommendationsError }}</div>
-        <div *ngIf="!recommendationsLoading && !recommendationsError && recommendations.length === 0" class="text-muted small">
-            No recommendations available yet.
-        </div>
-        <ul *ngIf="!recommendationsLoading && recommendations.length > 0" class="list-group list-group-flush">
-            <li *ngFor="let rec of recommendations" class="list-group-item d-flex justify-content-between align-items-center">
-                <a [routerLink]="['/publications', rec.publicationId]" class="text-decoration-none">
-                    Publication #{{ rec.publicationId }}
-                </a>
-                <span class="badge bg-primary-subtle text-primary">
-                    {{ rec.similarityScore | number:'1.2-2' }}
-                </span>
-            </li>
-        </ul>
-    </div>
-
-    <!-- Comments Section (UI Only as requested) -->
-    <div *ngIf="!loading && publication" class="comments-section">
-        <div class="comments-header">
-            <span class="comments-count">5 Comments</span>
-            <div class="sort-controls">
-                <span class="post-meta">Sort by:</span>
-                <button class="sort-btn active"><i class="fas fa-fire"></i> Top</button>
-                <button class="sort-btn"><i class="fas fa-sun"></i> New</button>
-            </div>
-        </div>
-
-        <div class="comment-input-area">
-            <div class="avatar-circle">RD</div>
-            <input type="text" class="comment-input" placeholder="What are your thoughts on this paper?">
-        </div>
-
-        <div class="comment-list">
-            <!-- Mock Comment 1 -->
-            <div class="comment-item">
-                <div class="comment-main">
-                    <div class="avatar-circle" style="background-color: #42b72a;">RR</div>
-                    <div class="comment-content">
-                        <div class="comment-meta">
-                            <span class="comment-author">u/rd_researcher</span>
-                            <span class="comment-time">6 hours ago</span>
+                    <div class="sidebar-card">
+                        <h5 class="sidebar-title"><i class="fas fa-fire" style="color: #ff4500;"></i> Trending</h5>
+                        <div class="trending-tags">
+                            <a href="javascript:void(0)" class="trend-tag">#AI</a>
+                            <a href="javascript:void(0)" class="trend-tag">#QuantumComputing</a>
+                            <a href="javascript:void(0)" class="trend-tag">#CRISPR</a>
+                            <a href="javascript:void(0)" class="trend-tag">#ClimateChange</a>
+                            <a href="javascript:void(0)" class="trend-tag">#MachineLearning</a>
                         </div>
-                        <p class="comment-text">
-                            The methodology described in the abstract seems very robust. I'm particularly interested in
-                            how they handled the uncertainty quantification in their models.
-                        </p>
-                        <div class="comment-actions">
-                            <div class="vote-inline">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>112</span>
-                                <i class="fas fa-arrow-down"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="post-card">
+                        <div class="vote-sidebar">
+                            <button class="vote-btn" (click)="upvote()"><i class="fas fa-arrow-up"></i></button>
+                            <span class="vote-count">{{ (publication.upvotes || 0) - (publication.downvotes || 0) }}</span>
+                            <button class="vote-btn" (click)="downvote()"><i class="fas fa-arrow-down"></i></button>
+                        </div>
+
+                        <div class="content-area">
+                            <div class="post-header">
+                                <span class="category-badge">{{ publication.domain?.name }}</span>
+                                <span class="post-meta">Posted by <a href="#" class="text-decoration-none">u/research_hub</a> • 7 hours ago</span>
                             </div>
-                            <span class="reply-link"><i class="fas fa-reply"></i> Reply</span>
+
+                            <h1 class="post-title">{{ publication.title }}</h1>
+
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <i class="fas fa-users"></i>
+                                    <div>
+                                        <span class="info-label">Authors</span>
+                                        <span class="info-value">{{ getAuthors() }}</span>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-book"></i>
+                                    <div>
+                                        <span class="info-label">Journal</span>
+                                        <span class="info-value">{{ publication.journal || 'Universal Research Journal' }}</span>
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <div>
+                                        <span class="info-label">Year</span>
+                                        <span class="info-value">{{ getYear() }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="doi-block">
+                                <span class="doi-label"><i class="fas fa-link"></i> DOI:</span>
+                                <a [href]="'https://doi.org/' + publication.doi" target="_blank" class="doi-link">{{ publication.doi }}</a>
+                            </div>
+
+                            <h2 class="section-title">Abstract</h2>
+                            <p class="abstract-text">{{ publication.abstractText }}</p>
+
+                            <div class="tag-list">
+                                <span class="tag">#{{ publication.domain?.name?.replace(' ', '') }}</span>
+                                <span class="tag">#ScientificResearch</span>
+                                <span class="tag">#Article</span>
+                            </div>
+
+                            <div class="action-bar">
+                                <button class="action-btn active"><i class="fas fa-bookmark"></i> Saved</button>
+                                <button class="action-btn"><i class="fas fa-share"></i> Share</button>
+                                <a *ngIf="publication.pdfUrl" [href]="publication.pdfUrl" target="_blank" class="action-btn text-decoration-none">
+                                    <i class="fas fa-file-pdf"></i> View PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recommendations-card">
+                        <h2 class="section-title mb-3">AI Recommendations</h2>
+                        <div *ngIf="recommendationsLoading" class="text-muted small">Loading recommendations...</div>
+                        <div *ngIf="recommendationsError" class="alert alert-warning py-2 mb-2">{{ recommendationsError }}</div>
+                        <div *ngIf="!recommendationsLoading && !recommendationsError && recommendations.length === 0" class="text-muted small">
+                            No recommendations available yet.
+                        </div>
+                        <ul *ngIf="!recommendationsLoading && recommendations.length > 0" class="list-group list-group-flush">
+                            <li *ngFor="let rec of recommendations" class="list-group-item d-flex justify-content-between align-items-center">
+                                <a [routerLink]="['/publications', rec.publicationId]" class="text-decoration-none">
+                                    Publication #{{ rec.publicationId }}
+                                </a>
+                                <span class="badge bg-primary-subtle text-primary">
+                                    {{ rec.similarityScore | number:'1.2-2' }}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="comments-section">
+                        <div class="comments-header">
+                            <span class="comments-count">5 Comments</span>
+                            <div class="sort-controls">
+                                <span class="post-meta">Sort by:</span>
+                                <button class="sort-btn active"><i class="fas fa-fire"></i> Top</button>
+                                <button class="sort-btn"><i class="fas fa-sun"></i> New</button>
+                            </div>
+                        </div>
+
+                        <div class="comment-input-area">
+                            <div class="avatar-circle">RD</div>
+                            <input type="text" class="comment-input" placeholder="What are your thoughts on this paper?">
+                        </div>
+
+                        <div class="comment-list">
+                            <div class="comment-item">
+                                <div class="comment-main">
+                                    <div class="avatar-circle" style="background-color: #42b72a;">RR</div>
+                                    <div class="comment-content">
+                                        <div class="comment-meta">
+                                            <span class="comment-author">u/rd_researcher</span>
+                                            <span class="comment-time">6 hours ago</span>
+                                        </div>
+                                        <p class="comment-text">
+                                            The methodology described in the abstract seems very robust. I'm particularly interested in how they handled the uncertainty quantification in their models.
+                                        </p>
+                                        <div class="comment-actions">
+                                            <div class="vote-inline">
+                                                <i class="fas fa-arrow-up"></i>
+                                                <span>112</span>
+                                                <i class="fas fa-arrow-down"></i>
+                                            </div>
+                                            <span class="reply-link"><i class="fas fa-reply"></i> Reply</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="comment-item">
+                                <div class="comment-main">
+                                    <div class="avatar-circle" style="background-color: #f7b924;">JS</div>
+                                    <div class="comment-content">
+                                        <div class="comment-meta">
+                                            <span class="comment-author">u/jane_scholar</span>
+                                            <span class="comment-time">4 hours ago</span>
+                                        </div>
+                                        <p class="comment-text">
+                                            Great paper! Does anyone have the supplemental data for the Figure 4?
+                                        </p>
+                                        <div class="comment-actions">
+                                            <div class="vote-inline">
+                                                <i class="fas fa-arrow-up"></i>
+                                                <span>45</span>
+                                                <i class="fas fa-arrow-down"></i>
+                                            </div>
+                                            <span class="reply-link"><i class="fas fa-reply"></i> Reply</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Mock Comment 2 -->
-            <div class="comment-item">
-                <div class="comment-main">
-                    <div class="avatar-circle" style="background-color: #f7b924;">JS</div>
-                    <div class="comment-content">
-                        <div class="comment-meta">
-                            <span class="comment-author">u/jane_scholar</span>
-                            <span class="comment-time">4 hours ago</span>
+                <div class="col-md-3">
+                    <div class="sidebar-card welcome-card">
+                        <h5 class="sidebar-title">Welcome to AI Research Hub</h5>
+                        <p class="small">A community-driven platform for sharing and discussing scientific publications across all disciplines.</p>
+                        <button class="btn btn-share" data-bs-toggle="modal" data-bs-target="#addPublicationModal" *ngIf="authService.canManageContent()">
+                            <i class="fas fa-plus mr-2"></i> Share Publication
+                        </button>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h5 class="sidebar-title"><i class="fas fa-chart-bar"></i> Community Stats</h5>
+                        <div class="stat-row">
+                            <span class="stat-label">Publications</span>
+                            <span class="stat-value">12,453</span>
                         </div>
-                        <p class="comment-text">
-                            Great paper! Does anyone have the supplemental data for the Figure 4?
-                        </p>
-                        <div class="comment-actions">
-                            <div class="vote-inline">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>45</span>
-                                <i class="fas fa-arrow-down"></i>
+                        <div class="stat-row">
+                            <span class="stat-label">Active Researchers</span>
+                            <span class="stat-value">8,921</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Comments Today</span>
+                            <span class="stat-value">1,247</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Fields Covered</span>
+                            <span class="stat-value">47</span>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <h5 class="sidebar-title"><i class="fas fa-trophy" style="color: #f7b924;"></i> Top Contributors</h5>
+                        <div class="contributor-item">
+                            <div class="contrib-info">
+                                <span class="rank">1</span>
+                                <span class="contrib-name">u/quantum_physicist</span>
                             </div>
-                            <span class="reply-link"><i class="fas fa-reply"></i> Reply</span>
+                            <span class="contrib-score">12.4k</span>
+                        </div>
+                        <div class="contributor-item">
+                            <div class="contrib-info">
+                                <span class="rank">2</span>
+                                <span class="contrib-name">u/climate_data</span>
+                            </div>
+                            <span class="contrib-score">9.9k</span>
+                        </div>
+                        <div class="contributor-item">
+                            <div class="contrib-info">
+                                <span class="rank">3</span>
+                                <span class="contrib-name">u/biotech_researcher</span>
+                            </div>
+                            <span class="contrib-score">7.8k</span>
                         </div>
                     </div>
                 </div>

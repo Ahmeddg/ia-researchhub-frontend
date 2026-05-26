@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PublicationService } from '../../../services/publication.service';
+import { DomainService } from '../../../services/domain.service';
+import { AuthService } from '../../../services/auth.service';
 import { Publication } from '../../../models/publication';
+import { Domain } from '../../../models/domain';
 import { RecommendationResponse } from '../../../models/classification';
 
 @Component({
@@ -19,18 +22,25 @@ export class PublicationDetailComponent implements OnInit {
   recommendations: RecommendationResponse[] = [];
   recommendationsLoading = false;
   recommendationsError = '';
+  domains: Domain[] = [];
+  selectedDomainId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
-    private publicationService: PublicationService
+    private publicationService: PublicationService,
+    private domainService: DomainService,
+    public authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.loadDomains();
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.publicationService.getById(Number(id)).subscribe({
         next: (data) => {
           this.publication = data;
+          this.selectedDomainId = data.domain?.id ?? null;
           this.loading = false;
           this.loadRecommendations(Number(id));
         },
@@ -41,6 +51,15 @@ export class PublicationDetailComponent implements OnInit {
         }
       });
     }
+  }
+
+  private loadDomains(): void {
+    this.domainService.getAll().subscribe({
+      next: (data) => {
+        this.domains = data;
+      },
+      error: (err) => console.error('Error loading domains', err)
+    });
   }
 
   private loadRecommendations(id: number): void {

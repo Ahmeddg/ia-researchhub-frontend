@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './components/home/home.component';
 import { UserListComponent } from './components/user/user-list/user-list.component';
 import { ResearcherListComponent } from './components/researcher/researcher-list/researcher-list.component';
 import { DomainListComponent } from './components/domain/domain-list/domain-list.component';
@@ -16,7 +15,8 @@ import { AiOpsComponent } from './components/ai/ai-ops/ai-ops.component';
 import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
+    { path: '', redirectTo: 'news', pathMatch: 'full' },
+    { path: 'home', redirectTo: 'news', pathMatch: 'full' },
     { 
         path: 'users', 
         component: UserListComponent, 
@@ -45,6 +45,6 @@ export const routes: Routes = [
     { path: 'news/:id', component: NewsDetailComponent },
     { path: 'sign-up', component: SignUpComponent },
     { path: 'login', component: SignInComponent },
-    { path: '**', redirectTo: '' }
+    { path: '**', redirectTo: 'news' }
 ];
 
