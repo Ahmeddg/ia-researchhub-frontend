@@ -17,6 +17,7 @@ export class SignInComponent {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
+  submitted = false;
 
   loginForm: FormGroup = this.fb.group({
     identifier: ['', [Validators.required]],
@@ -25,6 +26,8 @@ export class SignInComponent {
   });
 
   onSubmit() {
+    this.submitted = true;
+
     if (this.loginForm.valid) {
       const loginData = {
         username: this.loginForm.value.identifier,
@@ -39,8 +42,6 @@ export class SignInComponent {
           this.notificationService.error(error.error?.message || 'Login failed. Please check your credentials.');
         }
       });
-    } else {
-      this.loginForm.markAllAsTouched();
     }
   }
 }
