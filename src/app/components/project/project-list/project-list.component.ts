@@ -6,11 +6,12 @@ import { Project } from '../../../models/project';
 import { ProjectFormComponent } from '../project-form/project-form.component';
 import { AuthService } from '../../../services/auth.service';
 import { NotificationService } from '../../../services/notification.service';
+import { JoinUsModalComponent } from '../../shared/join-us-modal/join-us-modal.component';
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProjectFormComponent],
+  imports: [CommonModule, FormsModule, ProjectFormComponent, JoinUsModalComponent],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.css'
 })
@@ -22,6 +23,11 @@ export class ProjectListComponent implements OnInit {
   projects = signal<Project[]>([]);
   selectedProject = signal<Project | null>(null);
   isEditMode = signal<boolean>(false);
+  readonly joinUsImage = 'https://images.unsplash.com/photo-1766297248160-87aca6fa59ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080';
+
+  canSeeProjects(): boolean {
+    return this.authService.isLoggedIn();
+  }
 
   ngOnInit(): void {
     this.loadProjects();

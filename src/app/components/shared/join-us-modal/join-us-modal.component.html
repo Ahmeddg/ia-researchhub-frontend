@@ -1,0 +1,32 @@
+<div class="join-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="joinUsTitle">
+  <div class="join-modal-card">
+    <div class="join-modal-media">
+      <div class="join-modal-overlay"></div>
+      <img [src]="imageUrl" alt="Scientific research" class="join-modal-image" />
+      <div class="join-modal-media-copy">
+        <span class="join-modal-pill">Members only</span>
+        <h3 id="joinUsTitle">{{ title }}</h3>
+        <p>{{ message }}</p>
+      </div>
+    </div>
+
+    <div class="join-modal-body">
+      <div class="join-modal-icon">
+        <i class="fas fa-lock-open"></i>
+      </div>
+      <h4>Access the full experience</h4>
+      <p class="text-muted mb-4">
+        Browse projects, explore researchers, and connect with the community by logging in or creating your account.
+      </p>
+
+      <div class="join-modal-actions">
+        <a routerLink="/login" class="btn btn-primary btn-lg rounded-pill px-4 fw-bold">Sign In</a>
+        <a routerLink="/sign-up" class="btn btn-outline-primary btn-lg rounded-pill px-4 fw-bold">Sign Up</a>
+      </div>
+
+      <p class="join-modal-footnote">
+        Already have an account? <a routerLink="/login">Go to sign in</a> or <a routerLink="/sign-up">create one now</a>.
+      </p>
+    </div>
+  </div>
+</div>

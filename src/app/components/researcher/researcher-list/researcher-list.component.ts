@@ -6,11 +6,12 @@ import { ResearcherService } from '../../../services/researcher.service';
 import { Researcher } from '../../../models/researcher';
 import { ResearcherFormComponent } from '../researcher-form/researcher-form.component';
 import { NotificationService } from '../../../services/notification.service';
+import { JoinUsModalComponent } from '../../shared/join-us-modal/join-us-modal.component';
 
 @Component({
   selector: 'app-researcher-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ResearcherFormComponent],
+  imports: [CommonModule, FormsModule, ResearcherFormComponent, JoinUsModalComponent],
   templateUrl: './researcher-list.component.html',
   styleUrl: './researcher-list.component.css'
 })
@@ -22,6 +23,11 @@ export class ResearcherListComponent implements OnInit {
   researchers = signal<Researcher[]>([]);
   selectedResearcher = signal<Researcher | null>(null);
   isEditMode = signal<boolean>(false);
+  readonly joinUsImage = 'https://images.unsplash.com/photo-1766297247924-6638d54e7c89?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080';
+
+  canSeeResearchers(): boolean {
+    return this.authService.isLoggedIn();
+  }
 
   ngOnInit(): void {
     this.loadResearchers();
@@ -40,6 +46,10 @@ export class ResearcherListComponent implements OnInit {
   }
 
   openAddResearcherModal(): void {
+    if (!this.authService.isLoggedIn()) {
+      return;
+    }
+
     if (!this.authService.canManageResearchers()) {
       this.notificationService.error('You do not have permission to add researchers');
       return;

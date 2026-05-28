@@ -12,6 +12,8 @@ import { SignInComponent } from './components/sign-in/sign-in.component';
 import { ProfileComponent } from './components/user/profile/profile.component';
 import { RoleListComponent } from './components/role/role-list/role-list.component';
 import { AiOpsComponent } from './components/ai/ai-ops/ai-ops.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
+import { ResearcherApprovalsComponent } from './components/admin/researcher-approvals/researcher-approvals.component';
 import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
@@ -22,6 +24,18 @@ export const routes: Routes = [
         component: UserListComponent, 
         canActivate: [roleGuard], 
         data: { roles: ['ROLE_ADMIN'] } 
+    },
+    { 
+        path: 'dashboard',
+        component: AdminDashboardComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['ROLE_ADMIN'] }
+    },
+    {
+        path: 'admin/approvals',
+        component: ResearcherApprovalsComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['ROLE_ADMIN'] }
     },
     { 
         path: 'roles', 
