@@ -40,8 +40,8 @@
   color: var(--text-primary);
   font-family: var(--font-sans);
   padding: 32px 40px 80px;
-  max-width: 1400px;
-  margin: 0 auto;
+  /* max-width: 1400px; */
+  /* margin: 0 auto; */
 }
 
 /* ── Page header ───────────────────────────────────────────────────────────── */
