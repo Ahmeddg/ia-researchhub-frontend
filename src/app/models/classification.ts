@@ -100,6 +100,50 @@ export interface ReclusterHistoryEntry {
   pending_after?: number;
 }
 
+export interface SystemConfig {
+  [key: string]: any;
+}
+
+export interface SystemConfigUpdate {
+  key: string;
+  value: string;
+}
+
+export interface CorrectionEntry {
+  id: number;
+  publication_id: number;
+  assigned_cluster_id: number;
+  correct_cluster_id: number;
+  corrected_by: string;
+  confidence: number;
+  timestamp: string;
+}
+
+export interface TaxonomyClusterNode {
+  cluster_id: number;
+  label: string;
+  member_count: number;
+}
+
+export interface TaxonomyL2Node {
+  l2_id: number;
+  l2_label: string;
+  clusters: TaxonomyClusterNode[];
+  _expanded?: boolean; // For UI state
+}
+
+export interface TaxonomyL1Node {
+  l1_id: number;
+  l1_label: string;
+  l2_nodes: TaxonomyL2Node[];
+  _expanded?: boolean; // For UI state
+}
+
+export interface TaxonomyTreeResponse {
+  l1_nodes: TaxonomyL1Node[];
+  unassigned_clusters: TaxonomyClusterNode[];
+}
+
 // ── Close Pairs ───────────────────────────────────────────────────────────────
 
 export interface ClosePair {

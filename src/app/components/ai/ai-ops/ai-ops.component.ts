@@ -10,6 +10,11 @@ import {
   ReclusterResponse,
   ReclusterHistoryEntry,
   ClosePair,
+  SystemConfig,
+  CorrectionEntry,
+  TaxonomyTreeResponse,
+  TaxonomyL1Node,
+  TaxonomyL2Node,
 } from '../../../models/classification';
 
 type SortField = 'label' | 'member_count' | 'intra_cluster_mean_similarity'
@@ -34,6 +39,21 @@ export class AiOpsComponent implements OnInit, OnDestroy {
   error = '';
   reclustering = false;
   reclusterResult: ReclusterResponse | null = null;
+  activeTab: 'health' | 'config' | 'corrections' | 'taxonomy' = 'health';
+
+  // ── System Config ────────────────────────────────────────────────────────
+  systemConfig: SystemConfig = {};
+  savingConfig = false;
+  configSuccess = '';
+  configError = '';
+
+  // ── Corrections ────────────────────────────────────────────────────────
+  corrections: CorrectionEntry[] = [];
+  loadingCorrections = false;
+
+  // ── Taxonomy Tree ──────────────────────────────────────────────────────
+  taxonomyTree: TaxonomyTreeResponse | null = null;
+  loadingTaxonomy = false;
 
   // ── Section 1 data ────────────────────────────────────────────────────────
   health: HealthResponse = { status: 'LOADING', model_loaded: false };
@@ -66,8 +86,17 @@ export class AiOpsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.load();
+    this.loadConfig();
+    this.loadCorrections();
+    this.loadCorrections();
+    this.loadTaxonomy();
     // Auto-refresh every 30 seconds
-    this.refreshSub = interval(30_000).subscribe(() => this.load());
+    this.refreshSub = interval(30_000).subscribe(() => {
+      this.load();
+      if (this.activeTab === 'config') this.loadConfig();
+      if (this.activeTab === 'corrections') this.loadCorrections();
+      if (this.activeTab === 'taxonomy') this.loadTaxonomy();
+    });
   }
 
   ngOnDestroy(): void {
@@ -96,6 +125,41 @@ export class AiOpsComponent implements OnInit, OnDestroy {
         this.error   = 'AI service is currently unavailable.';
         this.loading = false;
       },
+    });
+  }
+
+  // ── Config ────────────────────────────────────────────────────────────────
+  
+  loadConfig(): void {
+    this.svc.getSystemConfig().subscribe(config => {
+      this.systemConfig = config;
+    });
+  }
+
+  saveConfigKey(key: string, value: any): void {
+    this.savingConfig = true;
+    this.configSuccess = '';
+    this.configError = '';
+    this.svc.updateSystemConfig(key, value.toString()).subscribe({
+      next: () => {
+        this.savingConfig = false;
+        this.configSuccess = `Saved ${key} successfully`;
+        setTimeout(() => this.configSuccess = '', 3000);
+      },
+      error: (err) => {
+        this.savingConfig = false;
+        this.configError = `Failed to save ${key}`;
+      }
+    });
+  }
+
+  // ── Corrections ──────────────────────────────────────────────────────────
+
+  loadCorrections(): void {
+    this.loadingCorrections = true;
+    this.svc.getCorrections(0, 50).subscribe(res => {
+      this.corrections = res;
+      this.loadingCorrections = false;
     });
   }
 
@@ -232,6 +296,33 @@ export class AiOpsComponent implements OnInit, OnDestroy {
 
   fmt(value?: number, digits = 3): string {
     return value != null ? value.toFixed(digits) : '—';
+  }
+
+  // ── Taxonomy Logic ──────────────────────────────────────────────────────
+  loadTaxonomy(): void {
+    this.loadingTaxonomy = true;
+    this.svc.getTaxonomy().subscribe({
+      next: (tree) => {
+        // Expand all L1 nodes by default, but leave L2 nodes collapsed for neatness
+        if (tree?.l1_nodes) {
+          tree.l1_nodes.forEach((l1: TaxonomyL1Node) => l1._expanded = true);
+        }
+        this.taxonomyTree = tree;
+        this.loadingTaxonomy = false;
+      },
+      error: (err) => {
+        console.error('Error fetching taxonomy tree', err);
+        this.loadingTaxonomy = false;
+      }
+    });
+  }
+
+  toggleL1(node: TaxonomyL1Node): void {
+    node._expanded = !node._expanded;
+  }
+
+  toggleL2(node: TaxonomyL2Node): void {
+    node._expanded = !node._expanded;
   }
 
   runDuration(entry: ReclusterHistoryEntry): string {

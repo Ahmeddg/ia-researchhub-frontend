@@ -10,6 +10,8 @@ import {
   ReclusterResponse,
   ReclusterHistoryEntry,
   ClosePair,
+  SystemConfig,
+  TaxonomyTreeResponse,
 } from '../models/classification';
 import { environment } from '../../environments/environment';
 
@@ -90,5 +92,32 @@ export class AiOpsService {
         ),
         catchError(() => of([]))
       );
+  }
+  // ── Section 5: Corrections ───────────────────────────────────────────────
+
+  getCorrections(page = 0, pageSize = 20): Observable<any[]> {
+    return this.http
+      .get<any[]>(`${this.base}/corrections`, {
+        params: new HttpParams().set('page', page).set('pageSize', pageSize)
+      })
+      .pipe(catchError(() => of([])));
+  }
+
+  submitCorrection(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.base}/corrections`, payload);
+  }
+
+  // ── Section 6: Configuration ─────────────────────────────────────────────
+
+  getSystemConfig(): Observable<SystemConfig> {
+    return this.http.get<SystemConfig>(`${this.base}/config`);
+  }
+
+  updateSystemConfig(key: string, value: string): Observable<any> {
+    return this.http.put<any>(`${this.base}/config`, { key, value });
+  }
+
+  getTaxonomy(): Observable<TaxonomyTreeResponse> {
+    return this.http.get<TaxonomyTreeResponse>(`${this.base}/taxonomy`);
   }
 }
