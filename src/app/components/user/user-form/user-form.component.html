@@ -1,20 +1,40 @@
-<form (ngSubmit)="onSubmit()" #userForm="ngForm">
-    <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input type="text" class="form-control" id="username" name="username" [(ngModel)]="user.username" required>
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-white border-0 py-4 px-4">
+        <h4 class="fw-bold mb-0 text-dark">User Form</h4>
     </div>
-    <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" name="email" [(ngModel)]="user.email" required>
+    <div class="card-body p-4">
+        <form (ngSubmit)="onSubmit()" #userForm="ngForm">
+            <div class="mb-3">
+                <label for="username" class="form-label small fw-bold text-primary text-uppercase">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-primary-soft border-0 text-primary"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control bg-light border-0 py-2" id="username" name="username" [(ngModel)]="user.username" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label small fw-bold text-primary text-uppercase">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-primary-soft border-0 text-primary"><i class="fas fa-envelope"></i></span>
+                    <input type="email" class="form-control bg-light border-0 py-2" id="email" name="email" [(ngModel)]="user.email" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label small fw-bold text-primary text-uppercase">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-primary-soft border-0 text-primary"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control bg-light border-0 py-2" id="password" name="password" [(ngModel)]="user.password" required>
+                </div>
+            </div>
+            <div class="mb-4">
+                <div class="form-check form-switch p-2 ps-5 bg-primary-soft rounded-3">
+                    <input type="checkbox" class="form-check-input" id="enabled" name="enabled" [(ngModel)]="user.enabled">
+                    <label class="form-check-label fw-semibold text-primary" for="enabled">Enabled</label>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold" [disabled]="!userForm.form.valid">Save</button>
+                <button type="button" class="btn btn-outline-primary rounded-pill px-4 fw-semibold" (click)="userForm.reset()">Reset</button>
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="user.password" required>
-    </div>
-    <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="enabled" name="enabled" [(ngModel)]="user.enabled">
-        <label class="form-check-label" for="enabled">Enabled</label>
-    </div>
-    <button type="submit" class="btn btn-primary" [disabled]="!userForm.form.valid">Save</button>
-    <button type="button" class="btn btn-secondary ms-2" (click)="userForm.reset()">Reset</button>
-</form>
+</div>

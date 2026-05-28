@@ -10,7 +10,7 @@ import { NotificationService } from '../../../services/notification.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './user-list.component.html',
-  styles: ``
+  styleUrls: ['./user-list.component.css']
 })
 export class UserListComponent implements OnInit {
   private userService = inject(UserService);
