@@ -26,7 +26,7 @@ export class NavbarComponent {
       } else {
         this.adminPendingCount.set(0);
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   logout() {

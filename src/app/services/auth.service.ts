@@ -42,7 +42,16 @@ export class AuthService {
   private getStoredUser(): AuthResponse | null {
     if (isPlatformBrowser(this.platformId)) {
       const user = localStorage.getItem('auth_user');
-      return user ? JSON.parse(user) : null;
+      if (!user) {
+        return null;
+      }
+
+      try {
+        return JSON.parse(user) as AuthResponse;
+      } catch {
+        localStorage.removeItem('auth_user');
+        return null;
+      }
     }
     return null;
   }
