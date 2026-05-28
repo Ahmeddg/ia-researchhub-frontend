@@ -1,5 +1,8 @@
-<div class="join-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="joinUsTitle">
-  <div class="join-modal-card">
+<div class="join-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="joinUsTitle" (click)="onBackdropClick($event)">
+  <div class="join-modal-card" style="position: relative;">
+    <button *ngIf="showClose" (click)="onClose()" class="btn-close-modal" aria-label="Close modal">
+      <i class="fas fa-times"></i>
+    </button>
     <div class="join-modal-media">
       <div class="join-modal-overlay"></div>
       <img [src]="imageUrl" alt="Scientific research" class="join-modal-image" />

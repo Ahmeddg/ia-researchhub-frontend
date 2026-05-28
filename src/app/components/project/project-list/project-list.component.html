@@ -2,7 +2,9 @@
     *ngIf="!canSeeProjects()"
     [title]="'Join us to see more'"
     [message]="'Sign in or create an account to explore project details, collaborators, and management tools.'"
-    [imageUrl]="joinUsImage">
+    [imageUrl]="joinUsImage"
+    [showClose]="true"
+    (close)="closeJoinUsModal()">
 </app-join-us-modal>
 
 <div class="hero-wrap hero-wrap-2"

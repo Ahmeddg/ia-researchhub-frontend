@@ -25,8 +25,14 @@ export class ProjectListComponent implements OnInit {
   isEditMode = signal<boolean>(false);
   readonly joinUsImage = 'https://images.unsplash.com/photo-1766297248160-87aca6fa59ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080';
 
+  userClosedModal = false;
+
+  closeJoinUsModal(): void {
+    this.userClosedModal = true;
+  }
+
   canSeeProjects(): boolean {
-    return this.authService.isLoggedIn();
+    return this.authService.isLoggedIn() || this.userClosedModal;
   }
 
   ngOnInit(): void {
@@ -40,7 +46,9 @@ export class ProjectListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading projects', err);
-        this.notificationService.error('Failed to load projects');
+        if (this.authService.isLoggedIn()) {
+          this.notificationService.error('Failed to load projects');
+        }
       }
     });
   }

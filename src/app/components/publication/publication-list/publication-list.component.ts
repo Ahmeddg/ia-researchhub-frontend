@@ -7,11 +7,12 @@ import { DomainService } from '../../../services/domain.service';
 import { Publication } from '../../../models/publication';
 import { Domain } from '../../../models/domain';
 import { PublicationFormComponent } from '../publication-form/publication-form.component';
+import { JoinUsModalComponent } from '../../shared/join-us-modal/join-us-modal.component';
 
 @Component({
   selector: 'app-publication-list',
   standalone: true,
-  imports: [CommonModule, PublicationFormComponent, RouterLink],
+  imports: [CommonModule, PublicationFormComponent, RouterLink, JoinUsModalComponent],
   templateUrl: './publication-list.component.html',
   styleUrl: './publication-list.component.css'
 })
@@ -20,6 +21,7 @@ export class PublicationListComponent implements OnInit {
   domains: Domain[] = [];
   activeSort: string = 'recommended';
   selectedDomainId: number | null = null;
+  showJoinUsModal = false;
 
   constructor(
     private publicationService: PublicationService,
@@ -121,7 +123,15 @@ export class PublicationListComponent implements OnInit {
     if (closeBtn) closeBtn.click();
   }
 
+  closeJoinUsModal(): void {
+    this.showJoinUsModal = false;
+  }
+
   upvote(id: number): void {
+    if (!this.authService.isLoggedIn()) {
+      this.showJoinUsModal = true;
+      return;
+    }
     this.publicationService.upvote(id).subscribe({
       next: (updated) => {
         const index = this.publications.findIndex(p => p.id === id);
@@ -140,6 +150,10 @@ export class PublicationListComponent implements OnInit {
   }
 
   downvote(id: number): void {
+    if (!this.authService.isLoggedIn()) {
+      this.showJoinUsModal = true;
+      return;
+    }
     this.publicationService.downvote(id).subscribe({
       next: (updated) => {
         const index = this.publications.findIndex(p => p.id === id);

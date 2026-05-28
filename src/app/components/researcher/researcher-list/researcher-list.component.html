@@ -2,7 +2,9 @@
     *ngIf="!canSeeResearchers()"
     [title]="'Join us to see more'"
     [message]="'Sign in or create an account to explore researchers, affiliations, and collaboration details.'"
-    [imageUrl]="joinUsImage">
+    [imageUrl]="joinUsImage"
+    [showClose]="true"
+    (close)="closeJoinUsModal()">
 </app-join-us-modal>
 
 <div class="hero-wrap hero-wrap-2"

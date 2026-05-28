@@ -25,8 +25,14 @@ export class ResearcherListComponent implements OnInit {
   isEditMode = signal<boolean>(false);
   readonly joinUsImage = 'https://images.unsplash.com/photo-1766297247924-6638d54e7c89?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080';
 
+  userClosedModal = false;
+
+  closeJoinUsModal(): void {
+    this.userClosedModal = true;
+  }
+
   canSeeResearchers(): boolean {
-    return this.authService.isLoggedIn();
+    return this.authService.isLoggedIn() || this.userClosedModal;
   }
 
   ngOnInit(): void {
@@ -40,7 +46,9 @@ export class ResearcherListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading researchers', err);
-        this.notificationService.error('Failed to load researchers');
+        if (this.authService.isLoggedIn()) {
+          this.notificationService.error('Failed to load researchers');
+        }
       }
     });
   }
