@@ -181,7 +181,7 @@ export class AiOpsComponent implements OnInit, OnDestroy {
         else if (tightness < 0.70 || corrRate > 0.05) health = 'amber';
       }
 
-      return { ...c, ...m, health };
+      return { ...c, ...m, health, member_count: c.member_count };
     });
 
     // Collect unique L1 labels for the filter dropdown
