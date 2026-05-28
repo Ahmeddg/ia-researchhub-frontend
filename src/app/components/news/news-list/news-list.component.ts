@@ -1,4 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, signal, effect } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -19,6 +21,7 @@ export class NewsListComponent implements OnInit, OnDestroy {
   private newsService = inject(NewsService);
   public authService = inject(AuthService);
   private notificationService = inject(NotificationService);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   newsList = signal<News[]>([]);
   featuredArticles = signal<News[]>([]);
@@ -39,12 +42,16 @@ export class NewsListComponent implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
+      if (!this.isBrowser) {
+        return;
+      }
+
       if (this.featuredArticles().length > 1) {
         this.startAutoRotation();
       } else {
         this.stopAutoRotation();
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   ngOnInit(): void {
@@ -58,7 +65,12 @@ export class NewsListComponent implements OnInit, OnDestroy {
   loadNews(): void {
     this.newsService.getAll().subscribe({
       next: (data) => {
-        const sorted = data.sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
+        const newsItems = Array.isArray(data) ? [...data] : [];
+        const sorted = newsItems.sort((a, b) => {
+          const bDate = new Date(b.createdAt ?? b.publishedAt ?? 0).getTime();
+          const aDate = new Date(a.createdAt ?? a.publishedAt ?? 0).getTime();
+          return bDate - aDate;
+        });
         this.newsList.set(sorted);
         const featured = sorted.filter(n => n.featured);
         this.featuredArticles.set(featured);
@@ -78,8 +90,8 @@ export class NewsListComponent implements OnInit, OnDestroy {
   }
 
   filterNews(): void {
-    const featuredIds = this.featuredArticles().map(n => n.id);
-    let rest = this.newsList().filter(n => !featuredIds.includes(n.id));
+    const featuredIds = this.featuredArticles().map(n => n.id).filter((id): id is number => typeof id === 'number');
+    const rest = this.newsList().filter(n => !featuredIds.includes(n.id ?? -1));
     if (this.activeCategory() === 'All') {
       this.filteredNews.set(rest);
     } else {
@@ -197,9 +209,9 @@ export class NewsListComponent implements OnInit, OnDestroy {
   }
 
   getArticleCount(cat: string): number {
-    const featuredIds = this.featuredArticles().map(n => n.id);
+    const featuredIds = this.featuredArticles().map(n => n.id).filter((id): id is number => typeof id === 'number');
     if (cat === 'All') return this.newsList().length - this.featuredArticles().length;
-    return this.newsList().filter(n => n.category === cat && !featuredIds.includes(n.id)).length;
+    return this.newsList().filter(n => n.category === cat && !featuredIds.includes(n.id ?? -1)).length;
   }
 
   onSaveSuccess(): void {

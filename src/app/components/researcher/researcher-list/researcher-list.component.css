@@ -52,3 +52,9 @@
 .card {
     border: none;
 }
+
+.page-locked {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+}

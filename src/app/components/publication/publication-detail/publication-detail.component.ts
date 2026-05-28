@@ -7,11 +7,12 @@ import { AuthService } from '../../../services/auth.service';
 import { Publication } from '../../../models/publication';
 import { Domain } from '../../../models/domain';
 import { RecommendationResponse } from '../../../models/classification';
+import { JoinUsModalComponent } from '../../shared/join-us-modal/join-us-modal.component';
 
 @Component({
   selector: 'app-publication-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, JoinUsModalComponent],
   templateUrl: './publication-detail.component.html',
   styleUrl: './publication-detail.component.css'
 })
@@ -24,6 +25,7 @@ export class PublicationDetailComponent implements OnInit {
   recommendationsError = '';
   domains: Domain[] = [];
   selectedDomainId: number | null = null;
+  showJoinUsModal = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -89,7 +91,15 @@ export class PublicationDetailComponent implements OnInit {
     return new Date(this.publication.publicationDate).getFullYear().toString();
   }
 
+  closeJoinUsModal(): void {
+    this.showJoinUsModal = false;
+  }
+
   upvote(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.showJoinUsModal = true;
+      return;
+    }
     if (!this.publication?.id) return;
     this.publicationService.upvote(this.publication.id).subscribe({
       next: (updated) => {
@@ -102,6 +112,10 @@ export class PublicationDetailComponent implements OnInit {
   }
 
   downvote(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.showJoinUsModal = true;
+      return;
+    }
     if (!this.publication?.id) return;
     this.publicationService.downvote(this.publication.id).subscribe({
       next: (updated) => {

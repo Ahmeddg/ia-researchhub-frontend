@@ -1,3 +1,12 @@
+<app-join-us-modal
+    *ngIf="!canSeeResearchers()"
+    [title]="'Join us to see more'"
+    [message]="'Sign in or create an account to explore researchers, affiliations, and collaboration details.'"
+    [imageUrl]="joinUsImage"
+    [showClose]="true"
+    (close)="closeJoinUsModal()">
+</app-join-us-modal>
+
 <div class="hero-wrap hero-wrap-2"
     style="background-image: url(assets/images/researchers.png); background-size: cover; background-repeat: no-repeat; background-position: center;"
     data-stellar-background-ratio="0.5">
@@ -12,7 +21,7 @@
     </div>
 </div>
 
-<div class="container py-5">
+<div class="container py-5" [class.page-locked]="!canSeeResearchers()">
     <div class="d-flex justify-content-between align-items-center mb-5">
         <h2 class="fw-bold mb-0">Research Team</h2>
         <button *ngIf="authService.canManageResearchers()" 

@@ -1,0 +1,51 @@
+<div class="container py-4">
+  <div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4 d-flex justify-content-between align-items-center">
+      <div>
+        <h3 class="fw-bold mb-1">Researcher Role Approvals</h3>
+        <p class="text-muted mb-0">Review and validate pending requests for ROLE_RESEARCHER.</p>
+      </div>
+      <button class="btn btn-outline-primary" (click)="loadPendingRequests()">
+        <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="card border-0 shadow-sm rounded-4">
+    <div class="card-body py-5 text-center text-muted">Loading pending requests...</div>
+  </div>
+
+  <div *ngIf="!loading()" class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th class="ps-4 py-3">Applicant</th>
+              <th class="py-3">Affiliation</th>
+              <th class="py-3">Submitted</th>
+              <th class="pe-4 py-3 text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let request of pendingRequests()">
+              <td class="ps-4 py-3">
+                <div class="fw-semibold">{{ request.fullName }}</div>
+                <div class="small text-muted">{{ request.username }} · {{ request.email }}</div>
+              </td>
+              <td class="py-3">{{ request.affiliation }}</td>
+              <td class="py-3">{{ request.createdAt | date:'medium' }}</td>
+              <td class="pe-4 py-3 text-end">
+                <button class="btn btn-sm btn-success me-2" (click)="approve(request.id)">Approve</button>
+                <button class="btn btn-sm btn-outline-danger" (click)="reject(request.id)">Reject</button>
+              </td>
+            </tr>
+            <tr *ngIf="pendingRequests().length === 0">
+              <td colspan="4" class="text-center py-5 text-muted">No pending requests.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

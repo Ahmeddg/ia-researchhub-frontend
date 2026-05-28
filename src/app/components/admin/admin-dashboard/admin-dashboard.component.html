@@ -1,0 +1,229 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">Admin Dashboard</h2>
+      <p class="text-muted mb-0">Detailed operational dashboard with dynamic visual analytics.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-primary" (click)="refreshDashboard()">
+        <i class="bi bi-arrow-clockwise me-2"></i>Refresh both
+      </button>
+      <button class="btn" [class.btn-success]="autoRefresh()" [class.btn-outline-secondary]="!autoRefresh()" (click)="toggleAutoRefresh()">
+        <i class="bi" [class.bi-broadcast]="autoRefresh()" [class.bi-pause-circle]="!autoRefresh()"></i>
+        <span class="ms-2">{{ autoRefresh() ? 'Auto ON' : 'Auto OFF' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="small text-muted mb-3" *ngIf="lastUpdated()">
+    Last update: {{ lastUpdated() | date:'mediumTime' }}
+  </div>
+
+  <div *ngIf="loading()" class="card border-0 shadow-sm rounded-4">
+    <div class="card-body py-5 text-center text-muted">Loading dashboard data...</div>
+  </div>
+
+  <ng-container *ngIf="!loading() && stats() as s">
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-2">
+        <div class="metric-card">
+          <div class="metric-label">Users</div>
+          <div class="metric-value">{{ s.totalUsers }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <div class="metric-card">
+          <div class="metric-label">Researchers</div>
+          <div class="metric-value">{{ s.totalResearchers }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <div class="metric-card">
+          <div class="metric-label">Publications</div>
+          <div class="metric-value">{{ s.totalPublications }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <div class="metric-card">
+          <div class="metric-label">Projects</div>
+          <div class="metric-value">{{ s.totalProjects }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <div class="metric-card">
+          <div class="metric-label">Domains</div>
+          <div class="metric-value">{{ s.totalDomains }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <div class="metric-card">
+          <div class="metric-label">News</div>
+          <div class="metric-value">{{ s.totalNews }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-xl-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-body">
+            <h5 class="fw-semibold mb-3">Publications by Domain</h5>
+            <div *ngIf="publicationSegments().length === 0" class="text-muted small">No domain data available.</div>
+            <div class="chart-grid" *ngIf="publicationSegments().length > 0">
+              <div class="donut-wrapper">
+                <div class="donut" [style.background]="publicationsDonutStyle()"></div>
+                <div class="donut-center">{{ s.totalPublications }}</div>
+              </div>
+              <div class="legend-list">
+                <div class="legend-item" *ngFor="let segment of publicationSegments(); trackBy: trackByLabel">
+                  <span class="legend-color" [style.background]="segment.color"></span>
+                  <span class="legend-label">{{ segment.label }}</span>
+                  <span class="legend-value">{{ segment.value }} ({{ segment.percentage | number:'1.0-1' }}%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-body">
+            <h5 class="fw-semibold mb-3">Projects by AI Category</h5>
+            <div *ngIf="projectSegments().length === 0" class="text-muted small">No category data available.</div>
+            <div class="chart-grid" *ngIf="projectSegments().length > 0">
+              <div class="donut-wrapper">
+                <div class="donut" [style.background]="projectsDonutStyle()"></div>
+                <div class="donut-center">{{ s.totalProjects }}</div>
+              </div>
+              <div class="legend-list">
+                <div class="legend-item" *ngFor="let segment of projectSegments(); trackBy: trackByLabel">
+                  <span class="legend-color" [style.background]="segment.color"></span>
+                  <span class="legend-label">{{ segment.label }}</span>
+                  <span class="legend-value">{{ segment.value }} ({{ segment.percentage | number:'1.0-1' }}%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-12 col-xl-8">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+              <h5 class="fw-semibold mb-0">Live Trend</h5>
+              <div class="btn-group btn-group-sm">
+                <button class="btn" [class.btn-primary]="selectedMetric() === 'totalPublications'" [class.btn-outline-primary]="selectedMetric() !== 'totalPublications'" (click)="setMetric('totalPublications')">
+                  Publications
+                </button>
+                <button class="btn" [class.btn-primary]="selectedMetric() === 'totalProjects'" [class.btn-outline-primary]="selectedMetric() !== 'totalProjects'" (click)="setMetric('totalProjects')">
+                  Projects
+                </button>
+                <button class="btn" [class.btn-primary]="selectedMetric() === 'totalUsers'" [class.btn-outline-primary]="selectedMetric() !== 'totalUsers'" (click)="setMetric('totalUsers')">
+                  Users
+                </button>
+                <button class="btn" [class.btn-primary]="selectedMetric() === 'totalResearchers'" [class.btn-outline-primary]="selectedMetric() !== 'totalResearchers'" (click)="setMetric('totalResearchers')">
+                  Researchers
+                </button>
+              </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <button class="btn btn-sm" [class.btn-primary]="trendViewMode() === 'both'" [class.btn-outline-primary]="trendViewMode() !== 'both'" (click)="setTrendViewMode('both')">
+                Both
+              </button>
+              <button class="btn btn-sm" [class.btn-primary]="trendViewMode() === 'live'" [class.btn-outline-primary]="trendViewMode() !== 'live'" (click)="setTrendViewMode('live')">
+                Live only
+              </button>
+              <button class="btn btn-sm" [class.btn-primary]="trendViewMode() === 'history'" [class.btn-outline-primary]="trendViewMode() !== 'history'" (click)="setTrendViewMode('history')">
+                History only
+              </button>
+            </div>
+
+            <div class="trend-legend mb-2">
+              <span class="trend-legend-item">
+                <span class="trend-legend-swatch trend-legend-live"></span>
+                Live
+              </span>
+              <span class="trend-legend-item">
+                <span class="trend-legend-swatch trend-legend-history"></span>
+                Historical snapshots
+              </span>
+            </div>
+
+            <div class="trend-chart-shell">
+              <div #trendChart class="trend-plotly"></div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-3 mt-3 small text-muted">
+              <span>Metric: <strong class="text-dark">{{ metricLabel(selectedMetric()) }}</strong></span>
+              <span>Current: <strong class="text-dark">{{ trendCurrent() }}</strong></span>
+              <span>
+                Delta:
+                <strong [class.text-success]="trendDelta() > 0" [class.text-danger]="trendDelta() < 0" class="text-dark">
+                  {{ trendDelta() > 0 ? '+' : '' }}{{ trendDelta() }}
+                </strong>
+              </span>
+              <span>Min: <strong class="text-dark">{{ trendMin() }}</strong></span>
+              <span>Max: <strong class="text-dark">{{ trendMax() }}</strong></span>
+            </div>
+
+            <div class="timeline-strip mt-3" *ngIf="trendPoints().length > 0">
+              <span *ngFor="let point of trendPoints()">{{ point.time }}</span>
+            </div>
+
+            <p class="small text-muted mt-2 mb-0">
+              Hover a point to see net change, trend state, rate, and intensity for the selected metric (added/removed estimate between snapshots).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-body">
+            <h5 class="fw-semibold mb-3">Insights</h5>
+            <ul class="list-group list-group-flush small">
+              <li class="list-group-item px-0 d-flex justify-content-between">
+                <span>Top Domain</span>
+                <strong>{{ topPublicationDomain() }}</strong>
+              </li>
+              <li class="list-group-item px-0 d-flex justify-content-between">
+                <span>Top AI Category</span>
+                <strong>{{ topProjectCategory() }}</strong>
+              </li>
+              <li class="list-group-item px-0 d-flex justify-content-between">
+                <span>Data Points in Trend</span>
+                <strong>{{ trendPoints().length }}</strong>
+              </li>
+              <li class="list-group-item px-0 d-flex justify-content-between">
+                <span>Auto Refresh</span>
+                <strong>{{ autoRefresh() ? '15s' : 'Disabled' }}</strong>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mt-4">
+      <div class="card-body d-flex flex-wrap gap-2">
+        <a routerLink="/admin/approvals" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-person-check me-1"></i>Researcher Approvals
+        </a>
+        <a routerLink="/users" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-people me-1"></i>Manage Users
+        </a>
+        <a routerLink="/roles" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-key me-1"></i>Manage Roles
+        </a>
+        <a routerLink="/ai-ops" class="btn btn-sm btn-outline-dark">
+          <i class="bi bi-cpu me-1"></i>AI Ops
+        </a>
+      </div>
+    </div>
+  </ng-container>
+</div>

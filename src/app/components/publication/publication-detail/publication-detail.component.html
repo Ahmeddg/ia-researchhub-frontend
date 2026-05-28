@@ -1,3 +1,9 @@
+<app-join-us-modal
+    *ngIf="showJoinUsModal"
+    [showClose]="true"
+    (close)="closeJoinUsModal()">
+</app-join-us-modal>
+
 <div class="publication-detail-container">
     <div *ngIf="loading" class="text-center p-5">
         <div class="spinner-border text-primary" role="status">
