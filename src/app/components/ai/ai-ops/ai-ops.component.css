@@ -546,6 +546,50 @@
   font-size: 0.82rem;
 }
 
+.cluster-table {
+  table-layout: fixed;
+}
+
+.cluster-table th,
+.cluster-table td {
+  vertical-align: middle;
+}
+
+.cluster-table th:nth-child(1),
+.cluster-table td:nth-child(1) {
+  width: 30%;
+}
+
+.cluster-table th:nth-child(2),
+.cluster-table td:nth-child(2) {
+  width: 24%;
+}
+
+.cluster-table th:nth-child(3),
+.cluster-table td:nth-child(3) {
+  width: 9%;
+}
+
+.cluster-table th:nth-child(4),
+.cluster-table td:nth-child(4) {
+  width: 12%;
+}
+
+.cluster-table th:nth-child(5),
+.cluster-table td:nth-child(5) {
+  width: 12%;
+}
+
+.cluster-table th:nth-child(6),
+.cluster-table td:nth-child(6) {
+  width: 9%;
+}
+
+.cluster-table th:nth-child(7),
+.cluster-table td:nth-child(7) {
+  width: 10%;
+}
+
 .data-table thead tr {
   border-bottom: 1px solid var(--border-strong);
   background: rgba(248, 250, 252, 0.95);
@@ -590,6 +634,29 @@
   gap: 8px;
   font-weight: 500;
   min-width: 200px;
+}
+
+.cluster-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cluster-cell--label {
+  font-weight: 500;
+}
+
+.cluster-cell__text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cluster-cell--path {
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .td-path {

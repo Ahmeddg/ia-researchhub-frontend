@@ -267,7 +267,7 @@
         <p class="empty-state">No clusters match your filter.</p>
       } @else {
         <div class="table-wrap">
-          <table class="data-table data-table--hover">
+          <table class="data-table data-table--hover cluster-table">
             <thead>
               <tr>
                 <th class="th-sort" (click)="sort('label')">Cluster {{ sortIcon('label') }}</th>
@@ -282,18 +282,22 @@
             <tbody>
               @for (row of filteredRows; track row.cluster_id) {
                 <tr class="data-row" [class.row--pinned]="row.cluster_id === -1">
-                  <td class="td-label">
-                    <span class="health-dot" [class]="'health-dot--' + row.health"></span>
-                    {{ row.label || ('Cluster #' + row.cluster_id) }}
+                  <td>
+                    <span class="cluster-cell cluster-cell--label">
+                      <span class="health-dot" [class]="'health-dot--' + row.health"></span>
+                      <span class="cluster-cell__text">{{ row.label || ('Cluster #' + row.cluster_id) }}</span>
+                    </span>
                   </td>
-                  <td class="td-path">
-                    @if (row.l1_label) {
-                      <span class="l1-badge">{{ row.l1_label }}</span>
-                    }
-                    @if (row.l2_label) {
-                      <span class="l2-badge">{{ row.l2_label }}</span>
-                    }
-                    @if (!row.l1_label && !row.l2_label) { — }
+                  <td>
+                    <span class="cluster-cell cluster-cell--path">
+                      @if (row.l1_label) {
+                        <span class="l1-badge">{{ row.l1_label }}</span>
+                      }
+                      @if (row.l2_label) {
+                        <span class="l2-badge">{{ row.l2_label }}</span>
+                      }
+                      @if (!row.l1_label && !row.l2_label) { — }
+                    </span>
                   </td>
                   <td class="td-right td-mono">{{ row.member_count }}</td>
                   <td class="td-right td-mono">
