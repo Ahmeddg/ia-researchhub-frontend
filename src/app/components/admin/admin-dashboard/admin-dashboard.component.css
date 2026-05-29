@@ -1,3 +1,87 @@
+.admin-dashboard-shell {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+}
+
+.admin-dashboard-shell > .container {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-dashboard-shell > .card,
+.admin-dashboard-shell .metric-card {
+  background: #ffffff;
+}
+
+.admin-dashboard-shell .btn {
+  border-radius: 14px;
+  font-weight: 600;
+  transition: all 0.18s ease;
+}
+
+.admin-dashboard-shell .btn:focus {
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14);
+}
+
+.admin-dashboard-shell .btn-primary,
+.admin-dashboard-shell .btn-success {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 55%, #2563eb 100%);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.admin-dashboard-shell .btn-primary:hover,
+.admin-dashboard-shell .btn-success:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 55%, #1d4ed8 100%);
+  border-color: transparent;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.admin-dashboard-shell .btn-outline-primary,
+.admin-dashboard-shell .btn-outline-secondary,
+.admin-dashboard-shell .btn-outline-dark {
+  color: #4f46e5;
+  border-color: rgba(99, 102, 241, 0.32);
+  background: #ffffff;
+}
+
+.admin-dashboard-shell .btn-outline-primary:hover,
+.admin-dashboard-shell .btn-outline-secondary:hover,
+.admin-dashboard-shell .btn-outline-dark:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(79, 70, 229, 0.12));
+  border-color: rgba(99, 102, 241, 0.48);
+  color: #3730a3;
+}
+
+.admin-dashboard-shell .btn-group .btn,
+.admin-dashboard-shell .d-flex.flex-wrap.gap-2.mb-3 .btn {
+  min-width: 92px;
+}
+
+.admin-dashboard-shell .btn-group .btn.btn-primary,
+.admin-dashboard-shell .d-flex.flex-wrap.gap-2.mb-3 .btn.btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  box-shadow: 0 10px 22px rgba(79, 70, 229, 0.22);
+}
+
+.admin-dashboard-shell .btn-group .btn.btn-outline-primary,
+.admin-dashboard-shell .d-flex.flex-wrap.gap-2.mb-3 .btn.btn-outline-primary {
+  background: #ffffff;
+}
+
+.admin-dashboard-title {
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0;
+  background: linear-gradient(135deg, #0f172a 0%, #4338ca 55%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .metric-card {
   background: #ffffff;
   border: 1px solid #e9ecef;
@@ -95,7 +179,7 @@
   min-height: 320px;
   border: 1px solid #e9ecef;
   border-radius: 12px;
-  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+  background: #ffffff;
   padding: 8px;
 }
 
